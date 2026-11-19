@@ -1519,7 +1519,7 @@ function snetRender(force){
   if (!NET.code) return;
   const st = NET.st; const ph = snetPhase(); const r = st && st.round;
   const grace = ph === 'review' && netNow() < (r.stopAt || 0) + 3000;
-  const sig = ph === 'play' ? JSON.stringify(['play', r.n]) : JSON.stringify([ph, grace, NET.err, NET.leaveArmed, NET.busy, st && st.host, r && [r.n, r.phase, r.reviewIdx], st && st.players.map(p => [p.pid, p.name, p.pts]), ph === 'review' ? [st.votes, st.answers] : null, ph === 'lobby' ? [S.settings.stop.level, S.settings.stop.time] : null]);
+  const sig = ph === 'play' ? JSON.stringify(['play', r.n]) : JSON.stringify([ph, grace, NET.err, NET.leaveArmed, NET.busy, st && st.host, r && [r.n, r.phase, r.reviewIdx], st && st.players.map(p => [p.pid, p.name, p.pts]), ph === 'review' ? r.players.map(id => [((st.answers || {})[id] || {})[r.reviewIdx] || '', r.players.map(v => (st.votes || {})[`${v}|${id}|${r.reviewIdx}`] || '')]) : null, ph === 'lobby' ? [S.settings.stop.level, S.settings.stop.time] : null]);
   if (!force && sig === NET.sig) { if (ph === 'play') snetProgress(); return; }
   NET.sig = sig;
   const view = ph + ':' + (r ? r.n + ':' + r.reviewIdx : '');
