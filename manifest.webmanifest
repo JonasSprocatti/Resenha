@@ -1,0 +1,18 @@
+{
+  "name": "Resenha: jogos de festa",
+  "short_name": "Resenha",
+  "description": "Seis jogos de festa num celular só: Quem Sou Eu?, Mímica, Palavra Proibida, Impostor, Na Medida e Stop.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FFE15A",
+  "theme_color": "#121428",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

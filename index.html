@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Resenha</title>
+<meta name="description" content="Seis jogos de festa num celular só: Quem Sou Eu?, Mímica, Palavra Proibida, Impostor, Na Medida e Stop.">
+<meta name="theme-color" content="#EDEFF6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121428" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Resenha">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{background:var(--paper,#EDEFF6)}
+body{margin:0}
+img{max-width:100%}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=Permanent+Marker&display=swap">
+<style>
+/* Layout: a desk of post-its. Home is a wall of game notes; a round fills the whole screen with one note held to the forehead or passed around. */
+:root{
+  --paper:#EDEFF6;
+  --surface:#FFFFFF;
+  --ink:#1A1D38;
+  --muted:#565B80;
+  --line:#D3D6E6;
+  --ok-soft:rgba(20,166,83,.16);
+  --note-ink:#1A1D38;
+  --note-veil:rgba(255,255,255,.5);
+  --note-shade:rgba(26,29,56,.1);
+  --ruler-bg:rgba(255,255,255,.82);
+  --yellow:#FFE15A;
+  --pink:#FF9DC2;
+  --blue:#86CDFF;
+  --green:#96E3A3;
+  --orange:#FFB36B;
+  --lilac:#C9B6FF;
+  --ok:#13A452;
+  --skip:#EC7130;
+  --bad:#D93C46;
+  --on-strong:#FFFFFF;
+  --focus:#2F6BFF;
+  --shadow:0 1px 0 rgba(26,29,56,.05), 0 12px 24px -14px rgba(26,29,56,.45);
+  --f-display:'Bricolage Grotesque','Figtree',system-ui,sans-serif;
+  --f-body:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-marker:'Permanent Marker','Marker Felt','Chalkboard SE','Bricolage Grotesque',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121428; --surface:#1B1E3A; --ink:#ECEDF8; --muted:#A3A7CB; --line:#2E3259;
+    --ok-soft:rgba(46,200,110,.2); --focus:#8FB0FF;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 16px 30px -16px rgba(0,0,0,.85);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121428; --surface:#1B1E3A; --ink:#ECEDF8; --muted:#A3A7CB; --line:#2E3259;
+  --ok-soft:rgba(46,200,110,.2); --focus:#8FB0FF;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 16px 30px -16px rgba(0,0,0,.85);
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body.playing{overflow:hidden}
+[data-c="yellow"]{--c:var(--yellow)} [data-c="pink"]{--c:var(--pink)} [data-c="blue"]{--c:var(--blue)} [data-c="green"]{--c:var(--green)} [data-c="orange"]{--c:var(--orange)} [data-c="lilac"]{--c:var(--lilac)}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 56px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px 4px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.01em;background:none;border:0;cursor:pointer;padding:4px 0}
+.brand-mark{width:30px;height:30px;background:var(--yellow);color:var(--note-ink);display:grid;place-items:center;font-family:var(--f-marker);font-size:19px;line-height:1;transform:rotate(-7deg);box-shadow:var(--shadow);border-radius:2px}
+.tb-actions{display:flex;gap:8px}
+.btn-ghost{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:14px;line-height:1;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 14px;cursor:pointer}
+.btn-ghost svg{flex:none}
+.badge{background:var(--ink);color:var(--paper);border-radius:99px;font-size:12px;padding:3px 7px;font-variant-numeric:tabular-nums}
+
+h1{font-family:var(--f-display);font-weight:800;line-height:.98;letter-spacing:-.03em;text-wrap:balance;margin:0}
+.hero{padding-block:30px 26px;display:grid;gap:14px}
+.hero h1{font-size:clamp(38px,6.4vw,68px);max-width:14ch}
+.lede{color:var(--muted);font-size:clamp(16px,2vw,19px);margin:0;max-width:58ch}
+
+.games{display:grid;gap:24px;grid-template-columns:repeat(3,minmax(0,1fr));padding-block:8px}
+.note{--tilt:-1.2deg;position:relative;display:flex;flex-direction:column;gap:10px;text-align:left;border:0;cursor:pointer;color:var(--note-ink);background:var(--c);padding:24px 20px 18px;min-height:230px;border-radius:2px 2px 8px 2px;transform:rotate(var(--tilt));box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease}
+.note::before{content:"";position:absolute;inset:0 0 auto;height:24px;background:linear-gradient(rgba(26,29,56,.07),rgba(26,29,56,0));pointer-events:none}
+.note:nth-child(2){--tilt:1deg}.note:nth-child(3){--tilt:-.5deg}.note:nth-child(4){--tilt:.8deg}.note:nth-child(5){--tilt:-.9deg}.note:nth-child(6){--tilt:.6deg}
+.note:hover{transform:rotate(0) translateY(-4px)}
+.note-where{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;opacity:.72}
+.note-title{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3vw,32px);line-height:1.02;letter-spacing:-.02em}
+.note-text{font-size:15px;line-height:1.45;max-width:38ch}
+.note-meta{margin-top:auto;display:flex;gap:6px;flex-wrap:wrap;font-size:13px;font-weight:600}
+.note-meta span{background:var(--note-veil);padding:4px 9px;border-radius:99px}
+@media (max-width:900px){.games{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.games{grid-template-columns:1fr;gap:20px}.note{min-height:0}}
+
+.lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;margin-top:56px;align-items:start}
+@media (max-width:820px){.lower{grid-template-columns:1fr}}
+.sec-title{font-family:var(--f-display);font-weight:800;font-size:28px;letter-spacing:-.02em;margin:0;line-height:1.1}
+.sec-sub{color:var(--muted);margin:8px 0 0;font-size:15px;max-width:56ch}
+.placar{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:16px;min-width:0;scroll-margin-top:16px}
+.addp{display:flex;gap:8px}
+.addp input{flex:1;min-width:0;font:500 16px var(--f-body);color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px}
+.btn-ink{font-weight:700;font-size:15px;background:var(--ink);color:var(--paper);border:0;border-radius:12px;padding:11px 16px;cursor:pointer;white-space:nowrap}
+.plist{list-style:none;margin:0;padding:0;display:grid}
+.plist li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.plist li:first-child{border-top:0}
+.pn-wrap{display:grid;gap:5px;justify-items:start;min-width:0}
+.pn{font-weight:600;overflow-wrap:anywhere}
+.lead .pn::after{content:"na frente";margin-left:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--yellow);color:var(--note-ink);padding:2px 6px;border-radius:4px;vertical-align:2px}
+.plvl{font-size:13px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:4px 6px;cursor:pointer;max-width:100%}
+.pp{display:inline-flex;align-items:center;gap:4px}
+.pp b{min-width:3ch;text-align:center;font:800 20px var(--f-display);font-variant-numeric:tabular-nums}
+.pp button,.pdel{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:18px;line-height:1;display:grid;place-items:center}
+.pdel{border:0;background:none;color:var(--muted)}
+.empty{margin:0;color:var(--muted);font-size:15px}
+.linkbtn{justify-self:start;background:none;border:0;padding:4px 0;color:var(--muted);font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.inline-link{background:none;border:0;padding:0;font:inherit;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.more{display:grid;gap:18px;min-width:0}
+.more dl{margin:0;display:grid;gap:14px}
+.more dt{font:800 17px/1.2 var(--f-display)}
+.more dd{margin:3px 0 0;color:var(--muted);font-size:15px;line-height:1.45}
+.foot{margin-top:48px;color:var(--muted);font-size:13px}
+
+.back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--muted);font-weight:600;font-size:15px;cursor:pointer;padding:10px 0 4px}
+.sh{padding-block:10px 26px;display:grid;gap:12px;justify-items:start}
+.sh h1{font-size:clamp(40px,7vw,70px)}
+.tag{display:inline-block;background:var(--c);color:var(--note-ink);font-size:12px;font-weight:700;line-height:1;text-transform:uppercase;letter-spacing:.1em;padding:7px 10px;border-radius:3px;transform:rotate(-1.5deg)}
+.setup-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:36px;align-items:start}
+@media (max-width:780px){.setup-grid{grid-template-columns:1fr;gap:28px}}
+.howto{background:var(--c);color:var(--note-ink);padding:24px 22px;transform:rotate(-.6deg);box-shadow:var(--shadow);border-radius:2px 2px 8px 2px;display:grid;gap:14px;min-width:0}
+.howto h2{font:800 22px/1.1 var(--f-display);margin:0}
+.howto ol{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.howto li{counter-increment:s;display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;line-height:1.45}
+.howto li::before{content:counter(s);font-family:var(--f-marker);font-size:22px;line-height:1.05}
+.tip{margin:0;padding-top:12px;border-top:2px dashed var(--note-shade);font-size:15px}
+.panel{display:grid;gap:26px;min-width:0}
+.field{display:grid;gap:10px;min-width:0}
+.field-h{font-size:12px;font-weight:700;line-height:1;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0}
+.field-note{margin:0;color:var(--muted);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:15px;line-height:1;padding:10px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer}
+.chip small{font-size:12px;font-weight:500;opacity:.6;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip:disabled{opacity:.4;cursor:not-allowed}
+.adult{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.04em;background:var(--bad);color:var(--on-strong);border-radius:4px;padding:3px 4px}
+textarea{width:100%;min-height:110px;resize:vertical;font:500 16px/1.45 var(--f-body);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;box-sizing:border-box}
+.stepper{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:4px;justify-self:start}
+.stepper button{width:40px;height:40px;border-radius:50%;border:0;background:var(--paper);font-size:20px;font-weight:700;line-height:1;cursor:pointer}
+.stepper output{min-width:3ch;text-align:center;font:800 20px var(--f-display);font-variant-numeric:tabular-nums}
+.sample{background:var(--c);color:var(--note-ink);padding:16px 18px;border-radius:2px 2px 8px 2px;box-shadow:var(--shadow);display:grid;gap:6px;max-width:320px;transform:rotate(.6deg)}
+.sample-w{font:400 30px/1.05 var(--f-marker)}
+.sample-l{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--bad)}
+.sample-f{font-weight:700}
+.start{font:800 21px/1 var(--f-display);letter-spacing:-.01em;background:var(--ink);color:var(--paper);border:0;border-radius:16px;padding:20px 24px;width:100%;cursor:pointer;box-shadow:var(--shadow)}
+.start:hover{transform:translateY(-1px)}
+.err{color:var(--bad);font-weight:700;margin:0}
+
+.res-head{padding-block:10px 28px;display:grid;gap:10px;justify-items:start}
+.res-head h1{font-size:clamp(52px,11vw,104px)}
+.res-head p{margin:0;color:var(--muted);font-size:18px}
+.res-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}
+@media (max-width:640px){.res-grid{grid-template-columns:1fr}}
+.res-grid h2{font:800 20px/1 var(--f-display);margin:0 0 12px;display:flex;gap:8px;align-items:baseline}
+.res-grid h2 span{color:var(--muted);font-size:16px;font-variant-numeric:tabular-nums}
+.wl{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
+.wl li{padding:7px 12px;border-radius:999px;font-weight:600;font-size:15px}
+.wl.ok li{background:var(--ok-soft)}
+.wl.miss li{background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.wl em{font-style:normal;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-left:6px;color:var(--bad)}
+.wl .none{background:none!important;border:0!important;padding-left:0;color:var(--muted);font-weight:500}
+.standings{margin-top:36px;max-width:460px}
+.standings ol{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:6px;counter-reset:r}
+.standings li{counter-increment:r;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:8px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.standings li::before{content:counter(r) "º";font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.standings li.me{border-color:var(--ink)}
+.standings small{color:var(--muted);font-weight:600;margin-left:6px}
+.standings b{font:800 18px var(--f-display);font-variant-numeric:tabular-nums}
+.res-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.res-actions .start{width:auto;flex:1 1 280px}
+.btn-line{font-weight:700;font-size:16px;background:transparent;border:1.5px solid var(--line);border-radius:16px;padding:18px 22px;cursor:pointer;flex:0 1 auto}
+
+/* ---------- stage: one full-screen note ---------- */
+.stage{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;gap:10px;background:var(--c,var(--yellow));color:var(--note-ink);
+  padding-top:max(12px,env(safe-area-inset-top,0px));padding-bottom:max(14px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation;overflow:hidden}
+.st-top{position:relative;z-index:3;display:flex;align-items:center;gap:12px;min-height:44px}
+.st-time{font:800 clamp(28px,6vmin,48px)/1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.st-time.hurry{color:var(--bad);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.st-score{margin-left:auto;font-weight:700;font-size:clamp(15px,2.6vmin,19px);line-height:1;background:var(--note-veil);padding:9px 13px;border-radius:99px;font-variant-numeric:tabular-nums}
+.st-label{font-size:13px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:.1em;opacity:.75}
+.push{margin-left:auto}
+.st-x{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;border:0;background:var(--note-shade);cursor:pointer}
+.st-body{position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column;gap:12px}
+.st-main{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.st-cat{font-size:clamp(12px,2.4vmin,17px);font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:.14em;opacity:.7;text-align:center}
+.st-wordbox{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.st-word{display:block;width:100%;overflow:hidden;font-family:var(--f-marker);font-weight:400;line-height:1.08;text-align:center;font-size:64px;overflow-wrap:normal;word-break:normal;padding-block:.04em}
+.st-forbid{flex:none;align-self:center;width:min(420px,100%);background:var(--note-veil);border-radius:14px;padding:12px 18px 14px}
+.st-forbid > span{display:block;font-size:12px;font-weight:700;line-height:1;text-transform:uppercase;letter-spacing:.12em;color:var(--bad);margin-bottom:8px}
+.st-forbid ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.st-forbid li{font:800 clamp(18px,3.8vmin,28px)/1.22 var(--f-display)}
+.st-forbid li.none{font-weight:600;opacity:.6;font-size:16px}
+@media (orientation:landscape){
+  .stage[data-mode="proibida"] .st-body{flex-direction:row;align-items:center}
+  .stage[data-mode="proibida"] .st-main{align-self:stretch}
+  .stage[data-mode="proibida"] .st-forbid{width:min(38%,360px)}
+}
+.stage[data-mode="qse"] .st-body{pointer-events:none;padding-block:30px}
+.zones{position:absolute;inset:0;z-index:0;display:grid;grid-template-rows:1fr 1fr;cursor:pointer}
+.zone{display:flex;justify-content:center;font-size:clamp(11px,2vmin,14px);font-weight:700;line-height:1;text-transform:uppercase;letter-spacing:.12em;opacity:.62}
+.zone.top{align-items:flex-start;padding-top:calc(max(12px,env(safe-area-inset-top,0px)) + 56px)}
+.zone.bot{align-items:flex-end;padding-bottom:calc(max(14px,env(safe-area-inset-bottom,0px)) + 2px);border-top:2px dashed var(--note-shade)}
+.zone:active{background:var(--note-shade)}
+.st-actions{position:relative;z-index:3;display:flex;gap:10px}
+.act{flex:1;min-height:58px;font:800 clamp(18px,3.4vmin,24px)/1 var(--f-display);border:0;border-radius:16px;padding:14px 10px;cursor:pointer;background:var(--note-shade);color:var(--note-ink)}
+.act.ok{flex:1.5;background:var(--ok);color:var(--on-strong)}
+.act.bad{background:var(--bad);color:var(--on-strong)}
+.act:active{transform:translateY(1px)}
+.act:disabled{opacity:.45;cursor:default}
+.flash{position:absolute;inset:0;z-index:10;display:grid;place-items:center;font:400 clamp(52px,15vmin,150px)/1 var(--f-marker);color:var(--on-strong);opacity:0;pointer-events:none;transition:opacity .1s ease}
+.flash.show{opacity:1}
+.flash[data-k="ok"]{background:var(--ok)}.flash[data-k="skip"]{background:var(--skip)}.flash[data-k="bad"]{background:var(--bad)}
+.ov{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,2.2vmin,16px);text-align:center;background:var(--c,var(--yellow));color:var(--note-ink);padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ov-dark{background:var(--note-ink);color:var(--yellow)}
+.ov-kicker{font-size:clamp(13px,2.6vmin,18px);font-weight:700;line-height:1.25;text-transform:uppercase;letter-spacing:.12em;margin:0;opacity:.8}
+.ov-count{font:400 clamp(120px,42vmin,340px)/.9 var(--f-marker);margin:0}
+.ov-big{font:400 clamp(60px,17vmin,150px)/1 var(--f-marker);margin:0;font-variant-numeric:tabular-nums}
+.ov-sub{font-size:clamp(15px,2.8vmin,20px);font-weight:500;line-height:1.4;margin:0;max-width:36ch}
+.ov-time{font:400 clamp(80px,26vmin,240px)/1 var(--f-marker);margin:0}
+.ov-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.cta{font:800 clamp(17px,3vmin,22px)/1.1 var(--f-display);background:var(--note-ink);color:var(--c,var(--yellow));border:0;border-radius:14px;padding:16px 24px;min-height:54px;cursor:pointer}
+.cta.ghost{background:transparent;color:var(--note-ink);box-shadow:inset 0 0 0 2px var(--note-ink)}
+.note-link{background:none;border:0;color:inherit;font-weight:600;font-size:15px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px}
+.st-center{position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(10px,2.4vmin,20px);text-align:center;overflow:auto;padding-block:8px}
+.st-center.scroll{justify-content:flex-start}
+.st-inner{margin-block:auto;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2.4vmin,18px);width:100%}
+.big-name{font:400 clamp(40px,12vmin,110px)/1.05 var(--f-marker);margin:0;overflow-wrap:anywhere;max-width:100%}
+.big-msg{font:400 clamp(30px,8vmin,64px)/1.08 var(--f-marker);margin:0;max-width:18ch;text-wrap:balance}
+.imp-rules{text-align:left;max-width:40ch;margin:0;padding-left:1.3em;font-size:clamp(15px,2.6vmin,19px);font-weight:500;line-height:1.45;display:grid;gap:6px}
+
+/* Na Medida: a tape-measure ruler from 0 to 100 */
+.med{width:min(820px,100%);display:grid;gap:10px}
+.poles{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;font:400 clamp(20px,4.6vmin,38px)/1.05 var(--f-marker)}
+.poles span:last-child{text-align:right}
+.ruler{--rh:clamp(72px,15vmin,108px);position:relative;height:var(--rh);background:var(--ruler-bg);border:2px solid var(--note-ink);border-radius:10px;overflow:hidden}
+.scale{position:absolute;top:0;bottom:0;left:11px;right:11px;overflow:hidden}
+.tk{position:absolute;top:0;width:2px;height:22%;margin-left:-1px;background:var(--note-ink)}
+.tk.major{height:42%}
+.band{position:absolute;top:0;bottom:0;animation:bandin .35s ease-out}
+.band.b1{background:rgba(26,29,56,.13)}
+.band.b2{background:rgba(26,29,56,.26)}
+.band.b3{background:var(--note-ink)}
+@keyframes bandin{from{opacity:0}to{opacity:1}}
+.bl{position:absolute;bottom:6px;transform:translateX(-50%);font:800 clamp(13px,2.4vmin,17px)/1 var(--f-display);color:var(--note-ink)}
+.bl.in{color:var(--c,var(--yellow))}
+.nums{position:relative;height:16px;margin:0 11px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;opacity:.7}
+.nums span{position:absolute;top:0;transform:translateX(-50%)}
+.ruler input[type=range]{-webkit-appearance:none;appearance:none;position:absolute;inset:0;width:100%;height:100%;margin:0;background:transparent;cursor:grab;touch-action:none}
+.ruler input[type=range]:disabled{cursor:default}
+.ruler input[type=range]::-webkit-slider-runnable-track{height:var(--rh);background:transparent;border:0}
+.ruler input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:var(--rh);border-radius:6px;background:var(--skip);box-shadow:inset 0 0 0 3px var(--note-ink)}
+.ruler input[type=range]::-moz-range-track{height:var(--rh);background:transparent;border:0}
+.ruler input[type=range]::-moz-range-thumb{width:22px;height:var(--rh);border-radius:6px;border:3px solid var(--note-ink);background:var(--skip);box-sizing:border-box}
+.ruler input[type=range]:focus-visible{outline:none}
+.ruler:focus-within{box-shadow:0 0 0 3px var(--focus)}
+.med-result{display:grid;gap:4px;justify-items:center}
+
+/* Stop: the drawn letter in a circle, the categories as paper slips */
+.stop-body{position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(12px,3vmin,28px);overflow:auto}
+@media (orientation:landscape){.stop-body{flex-direction:row}}
+.stop-lw{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px}
+.stop-letter{width:clamp(120px,36vmin,280px);aspect-ratio:1;max-width:100%;display:grid;place-items:center;border-radius:50%;background:var(--note-veil);font:400 clamp(84px,26vmin,210px)/1 var(--f-marker)}
+.stop-letter.land{animation:land .35s ease-out}
+@keyframes land{from{transform:scale(1.25)}to{transform:scale(1)}}
+.stop-cats{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:min(560px,100%)}
+@media (orientation:landscape){.stop-cats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.stop-cats li{background:var(--note-veil);border-radius:10px;padding:10px 12px;font-weight:600;font-size:clamp(14px,2.5vmin,18px);line-height:1.2;overflow-wrap:anywhere}
+.act.stop-go{font-size:clamp(24px,5vmin,36px);min-height:64px}
+.stop-score{width:min(460px,100%);background:var(--note-veil);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.stop-score ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.stop-score li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;text-align:left}
+.stop-score .sn{font-weight:700;overflow-wrap:anywhere}
+.stop-score b{font:800 20px var(--f-display);font-variant-numeric:tabular-nums;min-width:3ch;text-align:right}
+.stop-btns{display:flex;gap:6px}
+.stop-btns button{min-width:44px;height:40px;padding:0 8px;border-radius:10px;border:0;background:var(--note-ink);color:var(--c);font-weight:800;cursor:pointer}
+.stop-btns button:last-child{background:transparent;color:var(--note-ink);box-shadow:inset 0 0 0 2px var(--note-ink)}
+.stop-used{font-size:14px;opacity:.75}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .note,.note:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+<div id="stage" class="stage" hidden></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= Níveis ================= */
+const LV = ['f','m','d','i'];
+const LV_NAME = {f:'Fácil', m:'Médio', d:'Difícil', i:'Impossível'};
+const LV_MULT = {f:1, m:2, d:3, i:5};
+const L = (f, m, d, i) => ({f, m, d, i});
+
+/* ================= Cartas ================= */
+const DECKS = {
+  famosos:{label:'Famosos', lv:L(
+    ['Pelé','Neymar','Anitta','Xuxa','Silvio Santos','Ivete Sangalo','Ayrton Senna','Faustão','Ronaldinho Gaúcho','Roberto Carlos','Ana Maria Braga','Luciano Huck','Gisele Bündchen','Paulo Gustavo','Taylor Swift','Beyoncé','Lionel Messi','Cristiano Ronaldo','Michael Jackson','Elvis Presley','Lady Gaga','Shakira','Rihanna','Leonardo DiCaprio','Elon Musk','Usain Bolt','Madonna','Bob Marley','Justin Bieber','Selena Gomez','Will Smith','Tom Cruise','Angelina Jolie','Marilyn Monroe','Charlie Chaplin'],
+    ['Gilberto Gil','Caetano Veloso','Rita Lee','Marta','Rebeca Andrade','Whindersson Nunes','Fernanda Montenegro','Ludmilla','Pabllo Vittar','Galvão Bueno','Zeca Pagodinho','Tom Jobim','Jô Soares','Gugu Liberato','Hebe Camargo','Tatá Werneck','Juliette','Casimiro','Felipe Neto','Luan Santana','Marília Mendonça','Gusttavo Lima','Rodrigo Faro','Freddie Mercury','Steve Jobs','Bill Gates','Mark Zuckerberg','Oprah Winfrey','Keanu Reeves','Dwayne Johnson','Zendaya','Billie Eilish','Bad Bunny','Ed Sheeran','Adele'],
+    ['Cazuza','Renato Russo','Raul Seixas','Elis Regina','Cássia Eller','Tim Maia','Clarice Lispector','Oscar Niemeyer','Romário','Zico','Garrincha','Oscar Schmidt','Guga Kuerten','Daiane dos Santos','Gal Costa','Maria Bethânia','Chico Buarque','Djavan','Wagner Moura','Rodrigo Santoro','Sônia Braga','Lázaro Ramos','Jeff Bezos','Warren Buffett','Stephen Hawking','Quentin Tarantino','Steven Spielberg','Meryl Streep','David Bowie','Kurt Cobain'],
+    ['Hermeto Pascoal','Arnaldo Antunes','Ney Matogrosso','Glauber Rocha','Sebastião Salgado','Ziraldo','Mauricio de Sousa','Ariano Suassuna','Carlos Drummond de Andrade','Jorge Amado','Burle Marx','Vik Muniz','Linus Torvalds','Satoshi Nakamoto','Tim Berners-Lee','Alan Turing','Ada Lovelace','Hayao Miyazaki','Hideo Kojima','Banksy'])},
+  personagens:{label:'Personagens', lv:L(
+    ['Harry Potter','Mickey Mouse','Shrek','Bob Esponja','Homer Simpson','Batman','Homem-Aranha','Mulher-Maravilha','Super-Homem','Pikachu','Mario','Sonic','Darth Vader','Elsa','Branca de Neve','Cinderela','Pinóquio','Peter Pan','Mônica','Cebolinha','Chaves','Chapolin','Saci-Pererê','Scooby-Doo','Hulk','Barbie','Buzz Lightyear','Woody','Nemo','Simba','Stitch','Papai Noel','Chapeuzinho Vermelho','Tarzan','Pato Donald'],
+    ['Cascão','Magali','Seu Madruga','Chiquinha','Kiko','Curupira','Cuca','Emília','Pica-Pau','Coringa','Yoda','Gandalf','Pernalonga','Lobo Mau','Wandinha','Frankenstein','Drácula','Capitão Gancho','Mulan','Sherlock Holmes','Capitão América','Thor','Homem de Ferro','Wolverine','Burro do Shrek','Olaf','Minion','Garfield','Snoopy','Popeye','Bart Simpson','Patrick Estrela','Lula Molusco','Dory','Rapunzel'],
+    ['Visconde de Sabugosa','Dona Benta','Tia Nastácia','Jeca Tatu','Macunaíma','Capitu','Dom Quixote','Sancho Pança','Gollum','Hermione Granger','Dumbledore','Voldemort','Jack Sparrow','Indiana Jones','James Bond','Rocky Balboa','Edward Mãos de Tesoura','Hannibal Lecter','Mestre dos Magos','Zé Colmeia','Dick Vigarista','Penélope Charmosa','Jerry','Papa-Léguas','Coiote','Taz','Patolino','Gaguinho','Zé Carioca','Senninha'],
+    ['Boto-cor-de-rosa','Mula sem cabeça','Iara','Boitatá','Negrinho do Pastoreio','Bentinho','Brás Cubas','Policarpo Quaresma','Gregor Samsa','Holden Caulfield','Atticus Finch','Dorian Gray','Capitão Ahab','Sísifo','Prometeu','Medusa','Pandora','Ulisses','Gilgamesh','Lancelot'])},
+  historia:{label:'História', lv:L(
+    ['Cleópatra','Napoleão','Dom Pedro I','Tiradentes','Princesa Isabel','Santos Dumont','Leonardo da Vinci','Albert Einstein','Isaac Newton','Charles Darwin','William Shakespeare','Mozart','Beethoven','Van Gogh','Pablo Picasso','Júlio César','Cristóvão Colombo','Pedro Álvares Cabral','Gandhi','Martin Luther King','Nelson Mandela','Rainha Elizabeth II','Frida Kahlo','Galileu Galilei','Marie Curie','Zumbi dos Palmares','Neil Armstrong','Thomas Edison','Michelangelo','Joana d’Arc'],
+    ['Dom Pedro II','Machado de Assis','Tarsila do Amaral','Carmen Miranda','Sócrates','Tutancâmon','Alexandre, o Grande','Lampião','Maria Bonita','Chiquinha Gonzaga','Oswaldo Cruz','Anita Garibaldi','Getúlio Vargas','Juscelino Kubitschek','Aristóteles','Platão','Confúcio','Buda','Átila, o Huno','Gengis Khan','Marco Polo','Vasco da Gama','Fernão de Magalhães','Rei Arthur','Luís XIV','Maria Antonieta','Henrique VIII','Rainha Vitória','Abraham Lincoln','Winston Churchill'],
+    ['Dom João VI','Carlota Joaquina','Duque de Caxias','Marquês de Pombal','José Bonifácio','Padre Antônio Vieira','Aleijadinho','Chico Mendes','Dandara','Maria Quitéria','Joaquim Nabuco','Rui Barbosa','Carlos Chagas','Vital Brazil','Nicolau Copérnico','Johannes Gutenberg','Arquimedes','Pitágoras','Hipócrates','Spartacus','Nefertiti','Ramsés II','Hamurabi','Carlos Magno','Simón Bolívar'],
+    ['Bartolomeu de Gusmão','Nísia Floresta','Luís Gama','André Rebouças','Hipátia','Ibn Battuta','Zheng He','Mansa Musa','Ashoka','Hatshepsut','Boudica','Pachacuti','Montezuma','Toussaint Louverture','Imhotep'])},
+  animais:{label:'Animais', lv:L(
+    ['Cachorro','Gato','Cavalo','Vaca','Galinha','Pato','Porco','Leão','Tigre','Elefante','Girafa','Macaco','Zebra','Urso','Coelho','Rato','Cobra','Sapo','Peixe','Tubarão','Baleia','Golfinho','Pinguim','Jacaré','Tartaruga','Borboleta','Abelha','Formiga','Aranha','Papagaio'],
+    ['Capivara','Tamanduá','Bicho-preguiça','Arara','Tucano','Canguru','Coala','Panda','Hipopótamo','Rinoceronte','Polvo','Camaleão','Morcego','Coruja','Flamingo','Pavão','Cavalo-marinho','Água-viva','Caracol','Escorpião','Lobo','Raposa','Esquilo','Porco-espinho','Lhama','Camelo','Gorila','Avestruz','Onça-pintada','Mico-leão-dourado'],
+    ['Ornitorrinco','Tatu-bola','Quati','Anta','Ariranha','Peixe-boi','Lontra','Suricato','Hiena','Guaxinim','Gambá','Toupeira','Louva-a-deus','Vagalume','Joaninha','Libélula','Lobo-guará','Jabuti','Salamandra','Iguana','Narval','Morsa','Leão-marinho','Beija-flor','Urubu'],
+    ['Axolote','Tardígrado','Pangolim','Okapi','Aye-aye','Peixe-bolha','Dragão-de-komodo','Casuar','Quokka','Uacari','Saola','Társio','Peixe-lua','Equidna','Kakapo'])},
+  objetos:{label:'Objetos', lv:L(
+    ['Celular','Geladeira','Televisão','Cadeira','Mesa','Cama','Guarda-chuva','Escova de dentes','Óculos','Relógio','Mochila','Travesseiro','Espelho','Tesoura','Chinelo','Bicicleta','Bola','Chave','Garfo','Colher','Faca','Copo','Prato','Panela','Vassoura','Lápis','Caneta','Livro','Sofá','Ventilador'],
+    ['Liquidificador','Controle remoto','Grampeador','Panela de pressão','Micro-ondas','Secador de cabelo','Martelo','Lanterna','Skate','Violão','Microfone','Fone de ouvido','Carregador de celular','Cadeado','Vela','Rede de dormir','Ferro de passar','Balde','Garrafa térmica','Cabide','Prendedor de roupa','Pente','Batom','Abajur','Despertador','Guarda-roupa','Escada','Mouse','Teclado','Controle de videogame'],
+    ['Saca-rolhas','Abridor de lata','Ralador','Coador de café','Funil','Ampulheta','Bússola','Termômetro','Estetoscópio','Régua','Compasso','Transferidor','Furadeira','Alicate','Chave de fenda','Fita métrica','Lupa','Binóculos','Megafone','Metrônomo','Pendrive','Roteador','Disquete','Fita cassete','Vitrola'],
+    ['Sextante','Astrolábio','Teodolito','Gaita de foles','Ábaco','Mimeógrafo','Telégrafo','Monóculo','Pincenê','Gramofone','Periscópio','Sismógrafo','Theremin','Tear','Roca de fiar'])},
+  comidas:{label:'Comidas', lv:L(
+    ['Pizza','Hambúrguer','Brigadeiro','Coxinha','Pão de queijo','Feijoada','Açaí','Pastel','Sushi','Lasanha','Pipoca','Churrasco','Sorvete','Chocolate','Batata frita','Cachorro-quente','Arroz e feijão','Ovo frito','Banana','Maçã','Melancia','Abacaxi','Morango','Café','Bolo','Pão francês','Miojo','Pudim','Macarrão','Salada'],
+    ['Tapioca','Acarajé','Moqueca','Farofa','Paçoca','Pamonha','Cuscuz','Esfiha','Panqueca','Strogonoff','Bolo de cenoura','Brownie','Quindim','Beijinho','Canjica','Pé de moleque','Vatapá','Baião de dois','Escondidinho','Empadão','Galinhada','Polenta','Mandioca frita','Torresmo','Bauru','Misto-quente','Coalhada','Requeijão','Goiabada','Romeu e Julieta'],
+    ['Tacacá','Maniçoba','Pato no tucupi','Arroz de carreteiro','Barreado','Buchada de bode','Sarapatel','Caruru','Bobó de camarão','Cocada','Cajuzinho','Bem-casado','Sagu','Mungunzá','Arrumadinho','Quiche','Paella','Fondue','Risoto','Guacamole','Tiramisù','Croissant','Kebab','Pad thai','Ceviche'],
+    ['Cupuaçu','Bacuri','Pequi','Umbu','Cambuci','Jenipapo','Pitomba','Murici','Sapoti','Biribá','Tucumã','Natto','Haggis','Kimchi','Durian'])},
+  profissoes:{label:'Profissões', lv:L(
+    ['Médica','Bombeiro','Astronauta','Palhaço','Professora','Dentista','Cozinheiro','Policial','Piloto de avião','Carteiro','Mágico','Pedreiro','Cabeleireira','Veterinária','Motorista de ônibus','Salva-vidas','Garçom','Youtuber','Goleiro','Enfermeiro','Padeiro','Cantora','Pirata','Taxista','Jardineira'],
+    ['Detetive','Juíza','Fotógrafo','Programadora','Cantora de ópera','Pescador','Arqueóloga','Cientista','Encanador','Eletricista','Bailarina','Juiz de futebol','Costureira','Agricultor','Surfista','Maquiadora','Advogado','Arquiteta','Engenheiro','Jornalista','Psicóloga','Farmacêutico','Açougueiro','Frentista','Entregador de app','Motoboy','Manicure','Diarista','Personal trainer','Corretor de imóveis','Influenciadora','Streamer','Cuidadora de idosos','Vendedor ambulante','Porteiro'],
+    ['Sommelier','Ourives','Relojoeiro','Ferreiro','Apicultor','Taxidermista','Leiloeiro','Dublador','Locutor de rádio','Tradutora','Bibliotecária','Paleontólogo','Meteorologista','Controlador de voo','Mergulhador profissional','Afinador de piano','Tatuador','Barista'],
+    ['Atuário','Ombudsman','Despachante','Cartógrafo','Enólogo','Luthier','Sismólogo','Ergonomista','Glaciologista','Perfumista','Vidreiro','Ascensorista'])},
+  filmes:{label:'Filmes', lv:L(
+    ['Titanic','Toy Story','O Rei Leão','Frozen','Harry Potter e a Pedra Filosofal','Star Wars','Vingadores','Procurando Nemo','Shrek 2','Jurassic Park','Homem-Aranha no Aranhaverso','Carros','Os Incríveis','Moana','Avatar','Os Smurfs','Divertida Mente','Velozes e Furiosos','Piratas do Caribe','Esqueceram de Mim','A Pequena Sereia','Aladdin','Madagascar','Meu Malvado Favorito','Minions','Tropa de Elite','Cidade de Deus','Minha Mãe é uma Peça','O Auto da Compadecida','Liga da Justiça','Matrix','Missão Impossível','A Bela e a Fera','A Era do Gelo','Kung Fu Panda'],
+    ['O Senhor dos Anéis','De Volta para o Futuro','E.T.','Mad Max','Up: Altas Aventuras','Coco','Ratatouille','Wall-E','Monstros S.A.','Zootopia','Encanto','Enrolados','Central do Brasil','Se Eu Fosse Você','Os Normais','Bacurau','Que Horas Ela Volta?','Ainda Estou Aqui','O Poderoso Chefão','Rocky','Exterminador do Futuro','Jogos Vorazes','Crepúsculo','Oppenheimer','Interestelar','A Origem','Pantera Negra','Duna','Gladiador','Forrest Gump'],
+    ['Pulp Fiction','Clube da Luta','O Iluminado','Psicose','Casablanca','Cantando na Chuva','Laranja Mecânica','2001: Uma Odisseia no Espaço','Blade Runner','Alien','O Silêncio dos Inocentes','Parasita','A Viagem de Chihiro','Meu Vizinho Totoro','O Fabuloso Destino de Amélie Poulain','Tudo em Todo Lugar ao Mesmo Tempo','Corra!','Whiplash','La La Land','O Cavaleiro das Trevas','O Grande Lebowski','Kill Bill','Carandiru','Lisbela e o Prisioneiro','O Palhaço','Bicho de Sete Cabeças','Eu, Tu, Eles'],
+    ['Cidadão Kane','O Encouraçado Potemkin','Metrópolis','Nosferatu','Deus e o Diabo na Terra do Sol','Vidas Secas','O Pagador de Promessas','Limite','Terra em Transe','Bye Bye Brasil','Rashomon','Os Sete Samurais','Persona','O Sétimo Selo','8½','Stalker','Solaris','Era Uma Vez em Tóquio'])},
+  series:{label:'Séries', lv:L(
+    ['Friends','Stranger Things','La Casa de Papel','Round 6','Os Simpsons','Game of Thrones','Breaking Bad','Wandinha','The Office','Grey’s Anatomy','Malhação','Carrossel','Sítio do Picapau Amarelo','Castelo Rá-Tim-Bum','A Grande Família','Os Trapalhões','Avenida Brasil','Big Brother Brasil','MasterChef','Peppa Pig','Galinha Pintadinha','Bluey','Patrulha Canina','Vale Tudo','Todo Mundo Odeia o Chris','Eu, a Patroa e as Crianças','Um Maluco no Pedaço','The Walking Dead','Bridgerton','Família Dinossauros'],
+    ['Sex Education','Euphoria','The Boys','The Last of Us','The Crown','Dark','Black Mirror','Peaky Blinders','Narcos','Vikings','Lost','Prison Break','How I Met Your Mother','The Big Bang Theory','Brooklyn Nine-Nine','Modern Family','Glee','Gossip Girl','Pretty Little Liars','The Witcher','Arcane','Rick and Morty','Family Guy','South Park','Hora de Aventura','Irmão do Jorel','Choque de Cultura','Porta dos Fundos','Cidade Invisível','Sessão de Terapia'],
+    ['Succession','The Wire','Os Sopranos','Mad Men','Better Call Saul','Fargo','True Detective','Twin Peaks','Arquivo X','Fleabag','Ruptura','Ted Lasso','O Urso','Mindhunter','Chernobyl','Band of Brothers','Seinfeld','Arrested Development','Atlanta','Dexter','House','Doctor Who','Hoje é Dia de Maria','Cidade dos Homens','Sob Pressão'],
+    ['Os Mutantes','Armação Ilimitada','TV Pirata','Mundo da Lua','Confissões de Adolescente','Rá-Tim-Bum','Vila Sésamo','Sai de Baixo','Toma Lá Dá Cá','O Prisioneiro','Monty Python','Fawlty Towers','Perdidos no Espaço','Além da Imaginação','Jornada nas Estrelas'])},
+  animes:{label:'Animes', lv:L(
+    ['Naruto','Pokémon','Dragon Ball','One Piece','Cavaleiros do Zodíaco','Sailor Moon','Death Note','Attack on Titan','Demon Slayer','Jujutsu Kaisen','My Hero Academia','Digimon','Yu-Gi-Oh!','Goku','Luffy','Sasuke','Ash Ketchum','Vegeta','Kakashi','Zoro','Tanjiro','Nezuko','Seiya','Doraemon','Beyblade','Totoro','Shin Chan','Hamtaro','Gohan','Itachi'],
+    ['Fullmetal Alchemist','Hunter x Hunter','Bleach','Tokyo Ghoul','One Punch Man','Chainsaw Man','Spy x Family','Haikyuu!!','Blue Lock','Sword Art Online','Code Geass','Fairy Tail','Black Clover','Inuyasha','Yu Yu Hakusho','Samurai X','Super Campeões','Gon','Killua','Light Yagami','L, de Death Note','Ichigo','Eren Yeager','Levi','Saitama','Gojo','Mikasa','Ryuk','Anya','Edward Elric'],
+    ['Neon Genesis Evangelion','Cowboy Bebop','Steins;Gate','Vinland Saga','Mob Psycho 100','JoJo’s Bizarre Adventure','Made in Abyss','Dr. Stone','Fire Force','Akira','Ghost in the Shell','Princesa Mononoke','Your Name','A Voz do Silêncio','Violet Evergarden','Frieren','Dandadan','Kaguya-sama','Toradora','Clannad','Shinji Ikari','Spike Spiegel','Okabe Rintaro','Thorfinn','Re:Zero'],
+    ['Serial Experiments Lain','Perfect Blue','Paprika','Mushishi','Monogatari','Texhnolyze','Ergo Proxy','Berserk','Lendas dos Heróis Galácticos','Ping Pong the Animation','Kaiba','Haibane Renmei','Tatami Galaxy','Akagi','Gintama'])},
+  jogos:{label:'Jogos', lv:L(
+    ['Minecraft','Fortnite','Free Fire','Roblox','Super Mario Bros','Pac-Man','Tetris','Among Us','FIFA','GTA','Candy Crush','Angry Birds','Subway Surfers','Clash Royale','Pokémon GO','Uno','Dominó','Xadrez','Dama','Banco Imobiliário','Jogo da Velha','Esconde-esconde','Pega-pega','Amarelinha','Bingo','Truco','Call of Duty','The Sims','Mortal Kombat','Street Fighter'],
+    ['The Legend of Zelda','League of Legends','Counter-Strike','Valorant','Clash of Clans','Mario Kart','Super Smash Bros','Overwatch','God of War','Red Dead Redemption','Resident Evil','Assassin’s Creed','Need for Speed','Guitar Hero','Just Dance','Crash Bandicoot','Donkey Kong','Space Invaders','Tomb Raider','Halo','PUBG','Genshin Impact','Stardew Valley','War','Jogo da Vida','Twister','Pebolim','Bolinha de gude','Pião','Peteca'],
+    ['Dark Souls','Elden Ring','Hollow Knight','Celeste','Undertale','Cuphead','Portal','Half-Life','Doom','Metal Gear Solid','Final Fantasy','Kingdom Hearts','Shadow of the Colossus','Bioshock','Skyrim','Witcher 3','Fallout','Silent Hill','Age of Empires','StarCraft','World of Warcraft','Catan','Ticket to Ride','Gamão','Mahjong'],
+    ['Disco Elysium','Outer Wilds','Myst','Planescape: Torment','Dwarf Fortress','NetHack','E.T. do Atari','Pong','Spacewar!','Zork','Go, o jogo de tabuleiro','Senet','Mancala','Shogi','Xiangqi'])},
+  lugares:{label:'Lugares', lv:L(
+    ['Praia','Cinema','Hospital','Aeroporto','Escola','Academia','Supermercado','Igreja','Zoológico','Circo','Biblioteca','Padaria','Farmácia','Estádio de futebol','Parque de diversões','Museu','Restaurante','Shopping','Fazenda','Floresta','Banheiro','Cozinha','Rio de Janeiro','São Paulo','Paris','Nova York','Disney','Japão','Egito','Bahia'],
+    ['Delegacia','Deserto','Montanha','Ilha deserta','Navio pirata','Submarino','Castelo','Amazônia','Pantanal','Polo Norte','Elevador','Festa junina','Carnaval','Casamento','Show de rock','Salão de beleza','Lava-rápido','Rodoviária','Acampamento','Sala de aula','Cristo Redentor','Pão de Açúcar','Cataratas do Iguaçu','Fernando de Noronha','Torre Eiffel','Coliseu','Muralha da China','Pirâmides do Egito','Estátua da Liberdade','Las Vegas'],
+    ['Machu Picchu','Petra','Angkor Wat','Taj Mahal','Stonehenge','Ilha de Páscoa','Veneza','Santorini','Islândia','Lençóis Maranhenses','Chapada Diamantina','Jalapão','Bonito, no Mato Grosso do Sul','Ouro Preto','Pelourinho','Monte Everest','Deserto do Saara','Grand Canyon','Triângulo das Bermudas','Área 51','Atlântida','Vaticano','Kremlin','Times Square','Alcatraz'],
+    ['Fossa das Marianas','Deserto do Atacama','Salar de Uyuni','Ilha da Queimada Grande','Monte Roraima','Pico da Neblina','Tristão da Cunha','Svalbard','Butão','Nauru','Tuvalu','Ponto Nemo','Caverna de Lascaux','Göbekli Tepe','Mohenjo-daro'])},
+  espaco:{label:'Espaço', lv:L(
+    ['Sol','Lua','Terra','Marte','Júpiter','Saturno','Estrela','Planeta','Foguete','Traje espacial','Cometa','Meteoro','Eclipse','Galáxia','Via Láctea','Buraco negro','Alienígena','Disco voador','Telescópio','Satélite','Estrela cadente','Constelação','Lua cheia','Nave espacial','Mercúrio','Vênus','Netuno','Urano','Plutão','Sistema Solar'],
+    ['Órbita','Asteroide','Big Bang','Nebulosa','Anéis de Saturno','Cinturão de asteroides','Lua nova','Supernova','Ano-luz','NASA','Apollo 11','Ônibus espacial','Telescópio Hubble','Cruzeiro do Sul','Três Marias','Estrela Dalva','Gravidade zero','Aurora boreal','Meteorito','Cratera','Rover em Marte','Cadela Laika','Yuri Gagarin','Marcos Pontes','Pegada na Lua','Sputnik','SpaceX','Lixo espacial','Solstício','Equinócio'],
+    ['Anã branca','Gigante vermelha','Estrela de nêutrons','Pulsar','Quasar','Exoplaneta','Matéria escura','Energia escura','Horizonte de eventos','Galáxia de Andrômeda','Nuvem de Oort','Cinturão de Kuiper','Europa, a lua de Júpiter','Titã','Io','Ganimedes','Fobos','Ceres','Alfa Centauri','Betelgeuse','Sírius','Voyager 1','Telescópio James Webb','Ponto de Lagrange','Grande Mancha Vermelha'],
+    ['Radiação cósmica de fundo','Limite de Chandrasekhar','Esfera de Dyson','Paradoxo de Fermi','Equação de Drake','Sinal Wow!','Magnetar','Blazar','Tempo de Planck','Raio de Schwarzschild','Sagitário A*','Oumuamua','Encélado','Tritão','Hipótese da Terra rara'])},
+  conceitos:{label:'Conceitos', lv:L(
+    ['Amor','Saudade','Medo','Alegria','Tristeza','Raiva','Amizade','Tempo','Sonho','Preguiça','Fome','Sono','Frio','Calor','Silêncio','Barulho','Sorte','Azar','Mentira','Verdade','Segredo','Ciúme','Vergonha','Paz','Guerra','Dinheiro','Música','Férias','Aniversário','Natal'],
+    ['Liberdade','Justiça','Felicidade','Nostalgia','Coragem','Inveja','Orgulho','Esperança','Gravidade','Democracia','Internet','Inteligência artificial','Inflação','Fofoca','Destino','Karma','Déjà vu','Ansiedade','Tédio','Paciência','Gratidão','Rotina','Futuro','Passado','Infinito','Energia','Eletricidade','Evolução','Fake news','Meme'],
+    ['Ironia','Paradoxo','Utopia','Empatia','Ética','Filosofia','Capitalismo','Socialismo','Globalização','Burocracia','Algoritmo','Metaverso','Criptomoeda','Placebo','Efeito borboleta','Relatividade','Fotossíntese','Átomo','DNA','Vacina','Sarcasmo','Procrastinação','Síndrome do impostor','Livre-arbítrio','Consciência'],
+    ['Entropia','Epistemologia','Niilismo','Existencialismo','Dialética','Zeitgeist','Serendipidade','Sinestesia','Dissonância cognitiva','Navalha de Occam','Gato de Schrödinger','Dilema do prisioneiro','Mais-valia','Antropoceno','Solipsismo'])},
+  acoes:{label:'Ações', lv:L(
+    ['Escovar os dentes','Andar de bicicleta','Pescar','Tirar uma selfie','Dormir','Comer pipoca','Tomar banho','Dirigir','Nadar','Jogar futebol','Chorar','Dançar','Lavar louça','Pular corda','Tomar sorvete','Ler um livro','Cozinhar','Falar no celular','Dar risada','Escrever uma carta'],
+    ['Trocar uma lâmpada','Fazer um bolo','Pisar num Lego','Surfar','Passar roupa','Trocar fralda','Fazer yoga','Jogar boliche','Procurar o controle remoto','Perder o ônibus','Abrir um pote emperrado','Tomar banho gelado','Dançar forró','Ver filme de terror','Pintar as unhas','Fazer churrasco','Chamar um táxi','Andar de patins','Fazer embaixadinha','Encher um balão'],
+    ['Montar uma barraca','Levar picada de abelha','Andar na corda bamba','Ordenhar uma vaca','Carregar um sofá pela escada','Fazer malabarismo','Escalar uma montanha','Tocar bateria','Dormir na aula','Mergulhar com tubarões','Fugir de um cachorro','Plantar uma árvore','Comer espaguete sem garfo','Descascar uma cebola','Ninar um bebê','Desarmar uma bomba','Montar um móvel sem manual','Domar um leão','Pular de paraquedas','Ser abduzido por um ET'],
+    ['Pagar um boleto vencido','Esquecer a senha do banco','Ter um déjà vu','Ganhar na loteria e perder o bilhete','Ligar a câmera na reunião sem querer','Mandar mensagem no grupo errado','Ser ignorado no grupo da família','Declarar o imposto de renda','Ficar sem bateria no meio do GPS','Tentar lembrar de um sonho','Ensinar a vó a usar o celular','Pedir desconto na feira','Escolher filme no streaming por uma hora','Dar ré no estacionamento lotado','Fingir que entendeu a piada','Ficar preso no elevador com o chefe','Levar spoiler da série','Perceber que o Wi-Fi caiu','Esperar o micro-ondas apitar','Acordar atrasado no dia da prova'])},
+  esportes:{label:'Esportes', lv:L(
+    ['Futebol','Vôlei','Basquete','Natação','Tênis','Boxe','Corrida','Skate','Ciclismo','Surfe'],
+    ['Judô','Ginástica artística','Golfe','Arco e flecha','Capoeira','Pingue-pongue','Boliche','Escalada','Handebol','Fórmula 1'],
+    ['Esgrima','Hipismo','Salto com vara','Levantamento de peso','Remo','Patinação no gelo','Esqui','Polo aquático','Beisebol','Futevôlei'],
+    ['Nado artístico','Curling','Biatlo','Lacrosse','Críquete','Rúgbi','Bobsled','Pentatlo moderno','Sepaktakraw','Hóquei na grama'])},
+  festa18:{label:'Festa', adult:true, lv:L(
+    ['Ressaca','Open bar','Crush','Ex-namorado','Contatinho','Balada','Primeiro encontro','Karaokê','Saideira','Esquenta','Caipirinha','Tequila','Cerveja quente','Fila do banheiro','Bloco de carnaval'],
+    ['Bafômetro','Vergonha alheia','Áudio de 5 minutos','Ficante','Despedida de solteiro','Lei seca','Festa da firma','Story de madrugada','Amigo que some na festa','Segurança da balada','Ressaca moral','Glitter','After','Uber de madrugada','Mensagem para o ex'],
+    ['Copão','Vinho de garrafão','Beer pong','Paquera','Cantada ruim','Match','Date às cegas','Red flag','Contatinho sumido','Vácuo','Crush do trabalho','Ghosting','Boate fechando','Bar de esquina','Gelo de coco'],
+    ['Love bombing','Situationship','Breadcrumbing','Ex que curte foto antiga','Recaída','Indireta no story','Combo de vodka','Rolê aleatório','Pé na bunda','Ficar de vela','Paquera de academia','Crush platônico','Dor de cotovelo','Desce mais uma','Cupido de bar'])},
+  acoes18:{label:'Festa', adult:true, lv:L(
+    ['Acordar de ressaca','Paquerar no bar','Dançar funk até o chão','Pedir a saideira','Virar uma dose de tequila'],
+    ['Fugir do ex na festa','Abrir a porta de casa bêbado','Mandar áudio para o ex','Dançar na festa da firma','Cantar sofrência no karaokê'],
+    ['Fazer o teste do bafômetro','Tentar beijar e levar um fora','Dividir a conta do bar','Esconder o celular do crush','Chorar no karaokê'],
+    ['Procurar Uber às 4 da manhã','Sair de fininho da festa','Ser barrado na balada','Postar story bêbado e apagar','Dormir no sofá do amigo'])}
+};
+
+const PROIBIDA = L(
+  [['Praia','areia','mar','sol','onda'],['Futebol','bola','gol','time','jogador'],['Celular','telefone','ligar','tela','aplicativo'],['Café','bebida','xícara','manhã','preto'],['Natal','dezembro','Papai Noel','presente','árvore'],['Pizza','queijo','massa','fatia','italiana'],['Cachorro','latir','animal','osso','gato'],['Chuva','água','nuvem','guarda-chuva','molhar'],['Escola','aula','professor','aluno','estudar'],['Aniversário','bolo','festa','parabéns','idade'],['Cinema','filme','pipoca','tela','ingresso'],['Sorvete','gelado','casquinha','sabor','derreter'],['Cama','dormir','quarto','travesseiro','lençol'],['Banho','água','chuveiro','sabonete','toalha'],['Dinheiro','real','nota','moeda','pagar'],['Pipoca','milho','cinema','estourar','manteiga'],['Ovo','galinha','gema','clara','fritar'],['Bicicleta','pedalar','roda','andar','guidão'],['Sol','quente','dia','estrela','luz'],['Bolo','aniversário','vela','fatia','forno'],['Geladeira','frio','cozinha','gelo','comida'],['Avião','voar','aeroporto','piloto','viagem'],['Música','cantar','som','ouvir','banda'],['Sapato','pé','calçar','salto','tênis'],['Livro','ler','página','história','biblioteca']],
+  [['Dentista','dente','consultório','boca','escova'],['Carnaval','fantasia','samba','festa','fevereiro'],['Brigadeiro','chocolate','doce','granulado','festa'],['Lua','noite','céu','cheia','astronauta'],['Casamento','noiva','noivo','igreja','aliança'],['Hospital','médico','doente','enfermeiro','ambulância'],['Óculos','ver','lente','olhos','grau'],['Inverno','frio','estação','casaco','neve'],['Cozinheiro','comida','chef','restaurante','panela'],['Fantasma','assustar','branco','lençol','morto'],['Pirata','navio','tesouro','tapa-olho','mar'],['Selfie','foto','celular','câmera','rosto'],['Vampiro','sangue','Drácula','dentes','noite'],['Academia','exercício','musculação','peso','treinar'],['Wi-Fi','internet','senha','sinal','conectar'],['Despertador','acordar','relógio','tocar','manhã'],['Abacaxi','fruta','amarelo','coroa','espinho'],['Festa junina','quadrilha','fogueira','caipira','junho'],['Capivara','animal','roedor','grande','água'],['Elevador','subir','descer','andar','prédio'],['Tatuagem','pele','desenho','agulha','tinta'],['Mágico','truque','cartola','coelho','varinha'],['Fogo','queimar','quente','chama','bombeiro'],['Pão de queijo','Minas','polvilho','café','bolinha'],['Formiga','inseto','pequena','açúcar','trabalhar']],
+  [['Novela','TV','capítulo','ator','episódio'],['Chave','porta','abrir','fechadura','trancar'],['Dinossauro','extinto','grande','fóssil','réptil'],['Picolé','palito','gelado','sorvete','verão'],['Escova de dentes','pasta','dentes','escovar','banheiro'],['Rede','dormir','balançar','varanda','pendurar'],['Robô','máquina','metal','inteligência','futuro'],['Trem','trilho','estação','vagão','metrô'],['Arco-íris','cores','chuva','céu','sol'],['Coração','amor','bater','órgão','sangue'],['Relógio','hora','ponteiro','tempo','pulso'],['Ônibus','ponto','motorista','passageiro','transporte'],['Neve','frio','branco','gelo','inverno'],['Vizinho','casa','lado','morar','rua'],['Videogame','jogar','controle','console','tela'],['Carteiro','carta','correio','entregar','encomenda'],['Palhaço','circo','nariz','engraçado','rir'],['Sereia','peixe','mar','cauda','metade'],['Paraquedas','pular','avião','cair','céu'],['Churrasco','carne','domingo','espeto','carvão'],['Segunda-feira','semana','dia','trabalho','domingo'],['Abraço','braços','apertar','carinho','beijo'],['Preguiça','animal','cansado','dormir','lento'],['Mentira','verdade','mentir','Pinóquio','enganar'],['Saudade','falta','sentir','longe','lembrar']],
+  [['Ironia','sarcasmo','contrário','piada','dizer'],['Democracia','voto','eleição','povo','governo'],['Inflação','preço','aumento','dinheiro','economia'],['Gravidade','cair','Newton','peso','força'],['Algoritmo','computador','programa','passos','internet'],['Nostalgia','saudade','passado','lembrar','infância'],['Paradoxo','contradição','lógica','impossível','ao mesmo tempo'],['Empatia','sentir','outro','lugar','compaixão'],['Burocracia','papel','carimbo','fila','documento'],['Fotossíntese','planta','luz','sol','folha'],['Eco','som','repetir','voz','montanha'],['Sombra','luz','escuro','sol','corpo'],['Horóscopo','signo','astrologia','previsão','estrelas'],['Déjà vu','já vi','repetir','sensação','francês'],['Procrastinação','adiar','depois','preguiça','prazo'],['Metáfora','comparação','poesia','figura','sentido'],['Silêncio','barulho','quieto','som','calar'],['Destino','futuro','sorte','acontecer','escrito'],['Tempo','relógio','hora','passar','clima'],['Infinito','fim','número','nunca','sempre']]
+);
+const PROIBIDA18 = L(
+  [['Ressaca','beber','dor de cabeça','dia seguinte','festa'],['Balada','festa','dançar','noite','boate'],['Tequila','sal','limão','dose','México'],['Karaokê','cantar','microfone','música','bar']],
+  [['Crush','paixão','gostar','apaixonado','amor'],['Ex','namoro','terminar','antigo','passado'],['Saideira','última','bar','cerveja','ir embora'],['Open bar','bebida','grátis','festa','beber'],['Esquenta','antes','festa','beber','casa']],
+  [['Contatinho','ficar','celular','conversa','crush'],['Bafômetro','polícia','álcool','soprar','blitz'],['Cantada','paquera','conquistar','frase','flertar'],['Lei seca','dirigir','beber','proibido','multa']],
+  [['Primeiro encontro','date','nervoso','conhecer','jantar'],['Despedida de solteiro','casamento','noivo','festa','amigos'],['Ghosting','sumir','responder','mensagem','vácuo']]
+);
+const ESCALAS = [
+  ['Gelado','Quente'],['Barato','Caro'],['Inútil','Essencial'],['Fácil','Difícil'],['Saudável','Porcaria'],['Chato','Divertido'],['Feio','Bonito'],
+  ['Fraco','Forte'],['Silencioso','Barulhento'],['Lento','Rápido'],['Minúsculo','Gigante'],['Assustador','Fofo'],['Brega','Chique'],
+  ['Café da manhã','Janta'],['Coisa de criança','Coisa de adulto'],['Esquecível','Inesquecível'],['Normal','Esquisito'],['Vilão','Herói'],
+  ['Moda passageira','Clássico eterno'],['Música para chorar','Música para dançar'],['Raro','Comum'],['Fedido','Cheiroso'],['Seco','Molhado'],
+  ['Mole','Duro'],['Filme ruim','Filme bom'],['Pet péssimo','Pet perfeito'],['Superpoder inútil','Superpoder incrível'],['Emprego chato','Emprego dos sonhos'],
+  ['Comer sozinho','Dividir com a mesa'],['Antigo','Moderno'],['Coisa do interior','Coisa de cidade grande'],['Perigoso','Seguro'],['Doce','Salgado'],
+  ['Nada romântico','Muito romântico'],['Fácil de desenhar','Difícil de desenhar'],['Ficar em casa','Sair de casa'],['Motivo de vergonha','Motivo de orgulho'],
+  ['Não vale o preço','Vale cada centavo'],['Lenda urbana','Fato comprovado'],['Não é esporte','Esporte de verdade'],['Presente ruim','Presente incrível'],
+  ['Pode faltar no churrasco','Não pode faltar no churrasco'],['Comida de boteco','Comida de restaurante chique'],['Coisa de vó','Coisa de adolescente'],
+  ['Música de elevador','Música de carnaval'],['Domingo chato','Domingo perfeito'],['Amigo secreto ruim','Amigo secreto bom'],
+  ['Combina com praia','Combina com frio'],['Pagaria para não ver','Pagaria para ver'],['Nerd','Descolado'],['Desastre na cozinha','Chef de cozinha']
+];
+const ESCALAS18 = [
+  ['Date desastroso','Date perfeito'],['Ressaca leve','Ressaca de morte'],['Bebida fraca','Bebida que derruba'],
+  ['Mensagem inocente','Mensagem que não se manda bêbado'],['Contatinho','Casamento'],['Vergonha alheia leve','Vergonha alheia máxima'],
+  ['Cantada horrível','Cantada que funciona'],['Festa morta','Festa lendária'],['Red flag','Green flag'],['Fofoca fraca','Fofoca bombástica'],
+  ['Ex esquecido','Ex que ainda dói'],['Story discreto','Story que vira print']
+];
+/* faixas de pontos da régua (3, 2 e 1 ponto) em cada nível */
+const BANDS = {f:[6,13,20], m:[4,10,16], d:[3,7,12], i:[2,4,7]};
+const STOP_CATS = {
+  nome:{label:'Nome'}, cep:{label:'Cidade, estado ou país'}, animal:{label:'Animal'}, fruta:{label:'Fruta, legume ou verdura'},
+  cor:{label:'Cor'}, objeto:{label:'Objeto'}, comida:{label:'Comida'}, profissao:{label:'Profissão'}, marca:{label:'Marca'},
+  filme:{label:'Filme ou série'}, corpo:{label:'Parte do corpo'}, famoso:{label:'Famoso'}, musica:{label:'Cantor ou banda'},
+  verbo:{label:'Verbo'}, sogra:{label:'Minha sogra é…'}, praia:{label:'Coisa de levar à praia'}, time:{label:'Time de futebol'},
+  anime:{label:'Anime'}, jogo:{label:'Jogo'}, desculpa:{label:'Desculpa para não sair de casa'},
+  bebado:{label:'Coisa que se faz bêbado', adult:true}, bebida:{label:'Bebida', adult:true}
+};
+const STOP_LETTERS = {f:'ABCDEFGLMNPRST', m:'ABCDEFGHIJLMNOPRSTUV', d:'ABCDEFGHIJLMNOPQRSTUVXZ', i:'ABCDEFGHIJKLMNOPQRSTUVWXYZ'};
+const STOP_NOTE = {f:'Só letras fáceis, como A, B, C, M, P e S', m:'Ficam de fora K, Q, W, X, Y e Z', d:'Entram Q, X e Z; só K, W e Y ficam de fora', i:'Vale o alfabeto inteiro, até K, W e Y'};
+
+/* ================= Jogos ================= */
+const MODES = {
+  qse:{name:'Quem Sou Eu?', c:'yellow', where:'Celular na testa', people:'2+ pessoas', len:'1 min por vez', kind:'cards', forehead:true, perPlayer:true,
+    blurb:'Você não vê a carta, os amigos veem. Faça perguntas de sim ou não e descubra quem ou o que você é.',
+    how:['Escolha quem vai adivinhar, o nível e as categorias. Depois toque em Começar.','Coloque o celular na testa com a tela virada para os amigos. Em pé funciona mesmo com a rotação travada.','Faça perguntas de sim ou não: “Eu sou uma pessoa?”, “Eu existo de verdade?”. Os amigos só respondem.','Acertou? Toque na metade de baixo da tela. Travou? Toque na metade de cima para passar.'],
+    tip:'Sem limite de tempo, a rodada só acaba quando vocês tocarem em pausar e depois em encerrar.',
+    decks:['famosos','personagens','historia','animais','objetos','comidas','profissoes','filmes','series','animes','jogos','lugares','espaco','conceitos','festa18']},
+  mimica:{name:'Mímica', c:'pink', where:'Celular na mão', people:'4+ pessoas, em times', len:'1 min por vez', kind:'cards', perPlayer:true,
+    blurb:'Só gestos, nada de falar. Seu time tem um minuto para adivinhar o máximo de cartas.',
+    how:['Formem dois times. Quem faz a mímica segura o celular sem mostrar a tela.','Faça a mímica da carta sem falar, sem fazer sons e sem apontar coisas em volta.','O seu time grita palpites. Acertou, toque em Acertou; travou, toque em Pular.','Acabou o tempo, o celular passa para o outro time.'],
+    tip:'Variação: troque a mímica por desenho num papel, sem letras nem números.',
+    decks:['acoes','animais','profissoes','filmes','series','animes','esportes','objetos','famosos','personagens','acoes18']},
+  proibida:{name:'Palavra Proibida', c:'blue', where:'Celular na mão', people:'4+ pessoas, em times', len:'1 min por vez', kind:'cards', perPlayer:true,
+    blurb:'Faça seu time dizer a palavra da carta sem usar nenhuma das quatro palavras proibidas.',
+    how:['Formem dois times. Quem dá as dicas segura o celular; o time dele adivinha.','Explique a palavra de cima sem dizer nenhuma das quatro proibidas, nem pedaços delas.','Alguém do outro time vigia a tela. Escapou uma proibida? Toque em Proibida: tira pontos.','Nada de gestos, de soletrar ou de “rima com…”.']},
+  impostor:{name:'Impostor', c:'green', where:'Passa de mão em mão', people:'3 a 20 pessoas', len:'5 min por rodada', kind:'impostor',
+    blurb:'Todo mundo recebe a mesma palavra secreta, menos o impostor. Descubram quem está blefando.',
+    how:['Passe o celular. Cada pessoa vê a palavra secreta sozinha; o impostor só descobre que é o impostor.','Na sua vez, diga uma palavra ligada ao segredo, sem entregar demais.','Depois de duas ou três voltas, contem até três e todos apontam para o suspeito.','Pegaram o impostor? Ele ainda ganha se adivinhar a palavra secreta.']},
+  medida:{name:'Na Medida', c:'orange', where:'Passa de mão em mão', people:'3+ pessoas', len:'2 min por carta', kind:'medida', perPlayer:true,
+    blurb:'Uma régua entre dois opostos e um alvo escondido nela. Uma pessoa dá a dica; a roda tenta cravar o ponto.',
+    how:['Quem dá a dica pega o celular e vê, em segredo, onde o alvo caiu na régua de 0 a 100.','Pense numa coisa que fica bem nesse ponto entre os dois extremos e fale em voz alta. Entre Gelado e Quente, perto do quente: “café recém-passado”.','Esconda o alvo e entregue o celular. A roda conversa e arrasta o marcador até onde acha que o alvo está.','Revelem: no centro vale 3, perto vale 2, raspando vale 1, multiplicado pelo nível.'],
+    tip:'Dica boa é específica: um filme, uma comida, alguém que a roda toda conhece. Números não valem.'},
+  stop:{name:'Stop', c:'lilac', where:'Papel e caneta', people:'2+ pessoas', len:'2 min por letra', kind:'stop',
+    blurb:'A Adedonha de sempre: o celular sorteia a letra e todo mundo corre para preencher nome, cidade, animal e o resto.',
+    how:['Cada pessoa pega papel e caneta e escreve as categorias em colunas.','Toque em Sortear a letra. Todo mundo preenche cada categoria com uma palavra que comece com ela.','Quem terminar primeiro grita “Stop!” e toca no botão. Se tiver tempo marcado, o celular avisa quando acabar.','Leiam as respostas: 10 pontos se só você escreveu, 5 se alguém repetiu, 0 se ficou em branco.'],
+    tip:'Combinem antes se apelido vale como nome e se marca conta como objeto.'}
+};
+const IMP_DECKS = ['lugares','comidas','animais','objetos','profissoes','esportes','filmes','series','animes','jogos','personagens','famosos','espaco','festa18'];
+const CUSTOM_UI = {
+  qse:{title:'Suas palavras', ph:'Uma por linha. Nomes dos amigos, professores, piadas internas…', empty:'Elas viram a categoria “Minhas palavras” e entram em qualquer nível.'},
+  mimica:{title:'Suas palavras', ph:'Uma por linha. Ex.: Imitar o professor de Química', empty:'Elas viram a categoria “Minhas palavras” e entram em qualquer nível.'},
+  impostor:{title:'Suas palavras', ph:'Uma por linha. Lugares, comidas ou pessoas que a roda toda conhece.', empty:'Elas viram a categoria “Minhas palavras”.'},
+  proibida:{title:'Suas cartas', ph:'Uma por linha, assim:&#10;Churrasco do Zé: carne, domingo, piscina, cerveja', empty:'A palavra vem antes dos dois-pontos; as proibidas depois, separadas por vírgula.'},
+  medida:{title:'Suas escalas', ph:'Uma por linha, com uma barra entre os opostos:&#10;Aula chata / Aula legal', empty:'Use uma barra entre os dois opostos.'},
+  stop:{title:'Suas categorias', ph:'Uma por linha. Ex.: Apelido de alguém da roda', empty:'Entram na rodada junto com as categorias marcadas.'}
+};
+const MORE = [
+  ['Telefone sem fio','Alguém cochicha uma frase no ouvido do vizinho, que passa adiante. O último fala em voz alta o que entendeu.'],
+  ['Contato','Alguém pensa numa palavra e conta só a primeira letra. Se dois jogadores pensarem na mesma palavra e gritarem “Contato!” antes do dono adivinhar, ele revela a próxima letra.'],
+  ['20 Perguntas','Uma pessoa pensa em algo. A roda tem 20 perguntas de sim ou não para descobrir o quê.'],
+  ['Duas verdades e uma mentira','Cada um conta três fatos sobre si. A roda vota em qual é a mentira.'],
+  ['Detetive','Sorteiem papéis: um assassino, um detetive, o resto vítimas. O assassino mata piscando; o detetive tem três palpites.'],
+  ['Quem é mais provável','Alguém lê “quem é mais provável de…” e todo mundo aponta para uma pessoa ao mesmo tempo.']
+];
+
+/* ================= Utilidades ================= */
+const $ = (s, el) => (el || document).querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const uid = () => Math.random().toString(36).slice(2, 10);
+const plural = (n, one, many) => `${n} ${Math.abs(n) === 1 ? one : many}`;
+const fmt = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const fmtUp = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>';
+const ICON_X = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg>';
+const ICON_SOUND = on => on
+  ? '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>'
+  : '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+
+/* ================= Estado ================= */
+const KEY = 'na-testa-v1';
+const DEFAULTS = {
+  qse:{cats:['famosos','personagens','animais','filmes','series','animes','jogos','espaco'], time:60, player:null, level:'f'},
+  mimica:{cats:['acoes','animais','profissoes','filmes'], time:60, player:null, level:'f'},
+  proibida:{time:60, player:null, adult:false, mine:true, level:'f'},
+  impostor:{cat:'mix', n:5, imps:1, hint:true, level:'f'},
+  medida:{adult:false, mine:true, player:null, level:'f'},
+  stop:{cats:['nome','cep','animal','fruta','cor','objeto','comida','profissao'], time:0, level:'m'}
+};
+function load(){ try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } }
+const saved = load() || {};
+const S = {
+  view:'home', mode:null,
+  sound: saved.sound !== false,
+  players: Array.isArray(saved.players) ? saved.players.filter(p => p && typeof p.name === 'string' && p.name.trim()).slice(0, 20).map(p => ({id:String(p.id || uid()), name:p.name.trim().slice(0, 24), pts:Number(p.pts) || 0, lvl:LV.includes(p.lvl) ? p.lvl : 'f'})) : [],
+  custom:{}, settings:{}, used:{}, usedLetters:new Set()
+};
+Object.keys(MODES).forEach(m => { const v = (saved.custom || {})[m]; S.custom[m] = typeof v === 'string' ? v : ''; });
+for (const k in DEFAULTS) {
+  S.settings[k] = Object.assign(JSON.parse(JSON.stringify(DEFAULTS[k])), (saved.settings || {})[k] || {});
+  if (!LV.includes(S.settings[k].level)) S.settings[k].level = DEFAULTS[k].level;
+}
+['qse','mimica'].forEach(m => { const c = S.settings[m].cats; S.settings[m].cats = Array.isArray(c) ? c.filter(x => x === 'custom' || MODES[m].decks.includes(x)) : DEFAULTS[m].cats.slice(); });
+S.settings.stop.cats = Array.isArray(S.settings.stop.cats) ? S.settings.stop.cats.filter(k => STOP_CATS[k]) : DEFAULTS.stop.cats.slice();
+if (!['mix','custom'].includes(S.settings.impostor.cat) && !IMP_DECKS.includes(S.settings.impostor.cat)) S.settings.impostor.cat = 'mix';
+function save(){ try { localStorage.setItem(KEY, JSON.stringify({players:S.players, settings:S.settings, custom:S.custom, sound:S.sound})); } catch (e) {} }
+let saveT = null; function saveSoon(){ clearTimeout(saveT); saveT = setTimeout(save, 400); }
+const playerById = id => S.players.find(p => p.id === id) || null;
+function nextPlayer(id){ if (!S.players.length) return null; const i = S.players.findIndex(p => p.id === id); return i < 0 ? null : S.players[(i + 1) % S.players.length]; }
+
+/* nível da rodada: nos jogos de um por vez é o nível de quem joga; nos jogos em grupo é o da rodada */
+function roundPlayer(mode){ return MODES[mode].perPlayer ? playerById(S.settings[mode].player) : null; }
+function roundLevel(mode){ const p = roundPlayer(mode); return p ? p.lvl : S.settings[mode].level; }
+function setRoundLevel(mode, l){ const p = roundPlayer(mode); if (p) p.lvl = l; else S.settings[mode].level = l; }
+
+/* conteúdo que a própria roda escreve */
+function lines(mode){ const seen = new Set(); return (S.custom[mode] || '').split('\n').map(s => s.trim()).filter(s => s && !seen.has(s.toLowerCase()) && seen.add(s.toLowerCase())).slice(0, 300); }
+function customCards(){ return lines('proibida').map(l => { const i = l.indexOf(':'); const w = (i < 0 ? l : l.slice(0, i)).trim(); const f = i < 0 ? [] : l.slice(i + 1).split(',').map(s => s.trim()).filter(Boolean).slice(0, 5); return w ? {w, f} : null; }).filter(Boolean); }
+function customScales(){ return lines('medida').map(l => { const p = l.split(/\s*(?:\/|\||↔)\s*/); return p.length >= 2 && p[0] && p[1] ? {l:p[0], r:p[1]} : null; }).filter(Boolean); }
+function customCount(mode){ return mode === 'proibida' ? customCards().length : mode === 'medida' ? customScales().length : lines(mode).length; }
+
+/* ================= Som, vibração e tela acesa ================= */
+let AC = null;
+function audio(){ if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; } } if (AC && AC.state === 'suspended') AC.resume().catch(() => {}); return AC; }
+function tone(freq, dur, type, vol, when){
+  if (!S.sound) return; const c = audio(); if (!c) return;
+  const t = c.currentTime + (when || 0); const o = c.createOscillator(); const g = c.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.03);
+}
+const SFX = {
+  ok(){ tone(660, .1, 'triangle', .25); tone(990, .18, 'triangle', .25, .09); },
+  skip(){ tone(310, .18, 'square', .07); },
+  bad(){ tone(140, .38, 'sawtooth', .14); },
+  tick(){ tone(1250, .04, 'square', .04); },
+  count(){ tone(520, .12, 'sine', .2); },
+  go(){ tone(880, .26, 'sine', .25); },
+  end(){ tone(392, .24, 'sawtooth', .1); tone(330, .24, 'sawtooth', .1, .2); tone(262, .5, 'sawtooth', .1, .4); },
+  win(){ tone(523, .12, 'triangle', .22); tone(659, .12, 'triangle', .22, .1); tone(784, .3, 'triangle', .22, .2); }
+};
+function buzz(p){ try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+let wake = null;
+async function keepAwake(){ try { if ('wakeLock' in navigator) wake = await navigator.wakeLock.request('screen'); } catch (e) { wake = null; } }
+function releaseAwake(){ try { if (wake) wake.release(); } catch (e) {} wake = null; }
+
+/* ================= Páginas ================= */
+const app = $('#app');
+const stage = $('#stage');
+
+function topbar(){
+  return `<div class="topbar"><button class="brand" data-act="home" aria-label="Resenha, voltar ao início"><span class="brand-mark" aria-hidden="true">?</span>Resenha</button>
+  <div class="tb-actions"><button class="btn-ghost" id="snd" data-act="sound" aria-pressed="${S.sound}">${ICON_SOUND(S.sound)}${S.sound ? 'Som ligado' : 'Som desligado'}</button>
+  <button class="btn-ghost" id="tb-placar" data-act="goto-placar">Placar${S.players.length ? ` <span class="badge">${S.players.length}</span>` : ''}</button></div></div>`;
+}
+function refreshTopbar(){ const tb = $('.topbar', app); if (tb) tb.outerHTML = topbar(); }
+
+function renderHome(){
+  S.view = 'home';
+  app.innerHTML = `${topbar()}
+  <section class="hero"><h1>Pega o celular, chama a galera.</h1>
+  <p class="lede">Seis jogos de festa que rodam num celular só: adivinhar com o celular na testa, mímica, palavra proibida, impostor, uma régua de opostos e o Stop. Cada pessoa escolhe o próprio nível, e quanto mais difícil, mais pontos.</p></section>
+  <section class="games" aria-label="Jogos">${Object.keys(MODES).map(k => { const m = MODES[k]; return `<button class="note" data-c="${m.c}" data-act="open" data-mode="${k}">
+    <span class="note-where">${m.where}</span><span class="note-title">${m.name}</span><span class="note-text">${m.blurb}</span>
+    <span class="note-meta"><span>${m.people}</span><span>${m.len}</span></span></button>`; }).join('')}</section>
+  <div class="lower">
+    <section id="placar" class="placar" aria-labelledby="placar-h">
+      <div><h2 class="sec-title" id="placar-h">Placar</h2><p class="sec-sub">Opcional. Adicione pessoas ou times e escolha o nível de cada um: Fácil vale ×1, Médio ×2, Difícil ×3 e Impossível ×5 nos pontos.</p></div>
+      <form id="addp" class="addp" autocomplete="off"><label for="pname" class="sr">Nome da pessoa ou do time</label><input id="pname" maxlength="24" placeholder="Nome ou time"><button type="submit" class="btn-ink">Adicionar</button></form>
+      <div id="plist">${plistHTML()}</div>
+    </section>
+    <section class="more" aria-labelledby="more-h"><div><h2 class="sec-title" id="more-h">Sem celular também dá</h2><p class="sec-sub">Clássicos de roda para quando a bateria acabar.</p></div>
+      <dl>${MORE.map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join('')}</dl></section>
+  </div>
+  <p class="foot">Nomes, níveis, pontos e o que vocês escreverem ficam salvos só neste aparelho.</p>`;
+}
+
+function plistHTML(){
+  if (!S.players.length) return '<p class="empty">Ninguém no placar ainda. Dá para jogar sem, mas com nomes cada um escolhe o próprio nível e fica fácil saber quem está ganhando.</p>';
+  const max = Math.max(...S.players.map(p => p.pts));
+  const leaders = S.players.filter(p => p.pts === max).length;
+  return `<ul class="plist">${S.players.map(p => `<li${max > 0 && p.pts === max && leaders === 1 ? ' class="lead"' : ''}>
+    <div class="pn-wrap"><span class="pn">${esc(p.name)}</span><label class="sr" for="lvl-${p.id}">Nível de ${esc(p.name)}</label>
+      <select class="plvl" id="lvl-${p.id}" data-plvl="${p.id}">${LV.map(l => `<option value="${l}"${p.lvl === l ? ' selected' : ''}>${LV_NAME[l]} ×${LV_MULT[l]}</option>`).join('')}</select></div>
+    <span class="pp"><button data-act="pts" data-id="${p.id}" data-d="-1" aria-label="Tirar um ponto de ${esc(p.name)}">−</button><b>${p.pts}</b><button data-act="pts" data-id="${p.id}" data-d="1" aria-label="Dar um ponto para ${esc(p.name)}">+</button></span>
+    <button class="pdel" data-act="del-player" data-id="${p.id}" aria-label="Remover ${esc(p.name)}">${ICON_X}</button></li>`).join('')}</ul>
+    <button class="linkbtn" id="reset-pts" data-act="reset-pts">Zerar pontos</button>`;
+}
+function refreshPlacar(){ const el = $('#plist'); if (el) el.innerHTML = plistHTML(); refreshTopbar(); }
+
+function field(title, inner){ return `<div class="field"><h3 class="field-h">${title}</h3>${inner}</div>`; }
+function chip(act, v, label, on, disabled){ return `<button type="button" class="chip" id="${act}-${v || 'none'}" data-act="${act}" data-v="${esc(v)}" aria-pressed="${on ? 'true' : 'false'}"${disabled ? ' disabled' : ''}>${label}</button>`; }
+const adultTag = '<i class="adult">+18</i>';
+function customNote(mode){
+  const n = customCount(mode);
+  if (!n) return CUSTOM_UI[mode].empty;
+  if (mode === 'proibida') return `${plural(n, 'carta pronta', 'cartas prontas')}. Elas entram em qualquer nível.`;
+  if (mode === 'medida') return `${plural(n, 'escala pronta', 'escalas prontas')}.`;
+  if (mode === 'stop') return `${plural(n, 'categoria sua entra', 'categorias suas entram')} na rodada.`;
+  return `${plural(n, 'palavra pronta', 'palavras prontas')} na categoria “Minhas palavras”.`;
+}
+function customField(mode){
+  const u = CUSTOM_UI[mode];
+  return field(u.title, `<label class="sr" for="custom-${mode}">${u.title}</label><textarea id="custom-${mode}" data-custom="${mode}" placeholder="${u.ph}">${esc(S.custom[mode] || '')}</textarea><p class="field-note" id="custom-count">${customNote(mode)}</p>`);
+}
+function levelField(mode){
+  const p = roundPlayer(mode); const l = roundLevel(mode);
+  const extra = mode === 'medida' ? ' As faixas de pontos da régua ficam mais estreitas a cada nível.'
+    : mode === 'stop' ? ` ${STOP_NOTE[l]}.`
+    : mode === 'impostor' ? ' A palavra secreta fica mais difícil a cada nível, para todo mundo.' : '';
+  return field(p ? `Nível de ${esc(p.name)}` : 'Nível', `<div class="chips">${LV.map(x => chip('lvl', x, `${LV_NAME[x]} <small>×${LV_MULT[x]}</small>`, l === x)).join('')}</div>
+    <p class="field-note">${p ? 'Fica salvo no placar. ' : ''}Pontos ×${LV_MULT[l]}.${extra}</p>`);
+}
+function catChips(mode){
+  const cfg = S.settings[mode];
+  if (mode === 'impostor') {
+    const n = lines('impostor').length;
+    return chip('cat', 'mix', 'Misturar tudo', cfg.cat === 'mix') + IMP_DECKS.map(k => chip('cat', k, `${DECKS[k].label}${DECKS[k].adult ? ' ' + adultTag : ''}`, cfg.cat === k)).join('')
+      + (n ? chip('cat', 'custom', `Minhas palavras <small>${n}</small>`, cfg.cat === 'custom') : '');
+  }
+  if (mode === 'stop') return Object.keys(STOP_CATS).map(k => chip('cat', k, `${STOP_CATS[k].label}${STOP_CATS[k].adult ? ' ' + adultTag : ''}`, cfg.cats.includes(k))).join('');
+  const l = roundLevel(mode);
+  let h = MODES[mode].decks.map(k => chip('cat', k, `${DECKS[k].label}${DECKS[k].adult ? ' ' + adultTag : ''} <small>${DECKS[k].lv[l].length}</small>`, cfg.cats.includes(k))).join('');
+  const n = lines(mode).length;
+  if (n) h += chip('cat', 'custom', `Minhas palavras <small>${n}</small>`, cfg.cats.includes('custom'));
+  return h;
+}
+function deckChips(mode){
+  const cfg = S.settings[mode]; const l = roundLevel(mode);
+  const base = mode === 'proibida' ? PROIBIDA[l].length : ESCALAS.length;
+  const adult = mode === 'proibida' ? PROIBIDA18[l].length : ESCALAS18.length;
+  const n = customCount(mode);
+  return chip('adult', '0', `Só cartas livres <small>${base}</small>`, !cfg.adult) + chip('adult', '1', `Incluir ${adultTag} <small>+${adult}</small>`, cfg.adult)
+    + (n ? chip('mine', cfg.mine ? '0' : '1', `${mode === 'proibida' ? 'Minhas cartas' : 'Minhas escalas'} <small>${n}</small>`, cfg.mine) : '');
+}
+function playerChips(mode){
+  if (!S.players.length) return '<p class="field-note">Adicione nomes no <button class="inline-link" data-act="goto-placar">placar</button> para cada um ter o próprio nível e somar pontos.</p>';
+  const cur = S.settings[mode].player;
+  return `<div class="chips">${S.players.map(p => chip('player', p.id, `${esc(p.name)} <small>${LV_NAME[p.lvl]}</small>`, cur === p.id)).join('')}${chip('player', '', 'Sem placar', !cur)}</div>`;
+}
+function settingsHTML(mode){
+  const m = MODES[mode], cfg = S.settings[mode]; let h = '';
+  if (cfg.player && !playerById(cfg.player)) cfg.player = null;
+  if (m.kind === 'cards') {
+    h += field(mode === 'qse' ? 'Quem vai adivinhar' : 'Quem joga agora', playerChips(mode));
+    h += levelField(mode);
+    if (m.decks) h += field('Categorias', `<div class="chips" id="chips-cats">${catChips(mode)}</div><p class="field-note">${plural(buildPool(mode, roundLevel(mode)).length, 'carta', 'cartas')} com essas escolhas.</p>`);
+    if (mode === 'proibida') {
+      h += field('Cartas', `<div class="sample" data-c="blue" aria-label="Exemplo de carta"><span class="sample-w">Praia</span><span class="sample-l">Não pode dizer</span><span class="sample-f">areia · mar · sol · onda</span></div>`);
+      h += field('Baralho', `<div class="chips" id="chips-deck">${deckChips(mode)}</div>`);
+    }
+    h += customField(mode);
+    const times = mode === 'qse' ? [0, 30, 60, 90, 120] : [30, 60, 90, 120];
+    h += field('Tempo por rodada', `<div class="chips">${times.map(t => chip('time', String(t), t ? `${t} s` : 'Sem limite', cfg.time === t)).join('')}</div>${cfg.time === 0 ? '<p class="field-note">A rodada só acaba quando vocês tocarem em pausar e depois em encerrar.</p>' : ''}`);
+  } else if (m.kind === 'impostor') {
+    const named = S.players.length >= 3; const n = named ? S.players.length : cfg.n;
+    h += levelField(mode);
+    h += field('Categoria da palavra', `<div class="chips" id="chips-cats">${catChips(mode)}</div><p class="field-note" id="mix-note"${cfg.cat === 'mix' ? '' : ' hidden'}>Misturar tudo deixa as cartas +18 de fora.</p>`);
+    h += customField(mode);
+    h += field('Pessoas', named
+      ? `<p class="field-note">O celular vai chamar os ${S.players.length} nomes do placar, nesta ordem: ${esc(S.players.map(p => p.name).join(', '))}. No fim, quem ganhar leva os pontos. <button class="inline-link" data-act="goto-placar">Editar</button></p>`
+      : `<div class="stepper"><button type="button" data-act="npl" data-d="-1" aria-label="Uma pessoa a menos">−</button><output id="npl" aria-live="polite">${cfg.n}</output><button type="button" data-act="npl" data-d="1" aria-label="Uma pessoa a mais">+</button></div><p class="field-note">Com 3 ou mais nomes no <button class="inline-link" data-act="goto-placar">placar</button>, o celular chama cada pessoa pelo nome e soma os pontos de quem ganhar.</p>`);
+    h += field('Impostores', `<div class="chips">${chip('imps', '1', '1 impostor', cfg.imps !== 2 || n < 6)}${chip('imps', '2', '2 impostores', cfg.imps === 2 && n >= 6, n < 6)}</div>${n < 6 ? '<p class="field-note">Dois impostores a partir de 6 pessoas.</p>' : ''}`);
+    h += field('Dica para o impostor', `<div class="chips">${chip('hint', '1', 'Mostrar a categoria', cfg.hint)}${chip('hint', '0', 'Sem dica', !cfg.hint)}</div>`);
+  } else if (m.kind === 'medida') {
+    h += field('Quem joga a vez', playerChips(mode) + (S.players.length ? '<p class="field-note">Os pontos da carta vão para quem estiver marcado; depois passa para o próximo, já no nível dele.</p>' : ''));
+    h += levelField(mode);
+    h += field('Cartas', `<div class="chips" id="chips-deck">${deckChips(mode)}</div>`);
+    h += customField(mode);
+  } else {
+    h += levelField(mode);
+    h += field('Categorias', `<div class="chips">${catChips(mode)}</div><p class="field-note">${plural(cfg.cats.length, 'categoria marcada', 'categorias marcadas')}. Entre 6 e 10 costuma ser o ideal.</p>`);
+    h += customField(mode);
+    h += field('Tempo por letra', `<div class="chips">${chip('time', '0', 'Sem limite, vale o Stop!', cfg.time === 0)}${[60, 90, 120, 180].map(t => chip('time', String(t), `${t} s`, cfg.time === t)).join('')}</div>`);
+    h += field('Pontos', S.players.length
+      ? `<p class="field-note">No fim de cada letra dá para somar os pontos de cada um direto na tela, já multiplicados por ${LV_MULT[cfg.level]}.</p>`
+      : '<p class="field-note">Adicione nomes no <button class="inline-link" data-act="goto-placar">placar</button> para somar os pontos no fim de cada letra.</p>');
+  }
+  return h;
+}
+const START_LABEL = {cards:'Começar a rodada', impostor:'Sortear a palavra secreta', medida:'Tirar a primeira carta', stop:'Sortear a letra'};
+function renderSetup(mode){
+  S.view = 'setup'; S.mode = mode; const m = MODES[mode];
+  app.innerHTML = `${topbar()}
+  <button class="back" data-act="home">← Todos os jogos</button>
+  <header class="sh" data-c="${m.c}"><span class="tag">${m.where} · ${m.people}</span><h1>${m.name}</h1><p class="lede">${m.blurb}</p></header>
+  <div class="setup-grid">
+    <aside class="howto" data-c="${m.c}"><h2>Como jogar</h2><ol>${m.how.map(s => `<li><span>${s}</span></li>`).join('')}</ol>${m.tip ? `<p class="tip">${m.tip}</p>` : ''}</aside>
+    <div class="panel"><div class="panel" id="fields">${settingsHTML(mode)}</div><p class="err" id="err" role="alert" hidden></p>
+    <button class="start" id="start" data-act="start">${START_LABEL[m.kind]}</button></div>
+  </div>`;
+}
+function rerenderFields(){ const f = $('#fields'); if (f) f.innerHTML = settingsHTML(S.mode); const e = $('#err'); if (e) e.hidden = true; }
+function showErr(msg){ const el = $('#err'); if (el) { el.textContent = msg; el.hidden = false; } }
+
+let LAST = null;
+function renderResults(){
+  if (!LAST) { renderHome(); return; }
+  S.view = 'results'; S.mode = LAST.mode;
+  const m = MODES[LAST.mode]; const p = playerById(LAST.player);
+  const ok = LAST.results.filter(r => r.r === 'ok'); const miss = LAST.results.filter(r => r.r !== 'ok');
+  const count = k => LAST.results.filter(r => r.r === k).length;
+  const bad = count('bad'), skipN = count('skip'), timeN = count('time'), openN = count('open');
+  const nx = nextPlayer(LAST.player);
+  const tagFor = r => r.r === 'bad' ? '<em>proibida</em>' : r.r === 'time' ? '<em>sem tempo</em>' : r.r === 'open' ? '<em>em aberto</em>' : '';
+  const parts = [plural(ok.length, 'acerto', 'acertos')];
+  if (skipN) parts.push(plural(skipN, 'passada', 'passadas'));
+  if (bad) parts.push(plural(bad, 'proibida', 'proibidas'));
+  if (timeN) parts.push(`${timeN} sem tempo`);
+  if (openN) parts.push(`${openN} em aberto`);
+  const math = `Nível ${LV_NAME[LAST.lvl]}: ${LAST.raw} × ${LAST.mult} = ${LAST.score}.`;
+  app.innerHTML = `${topbar()}
+  <button class="back" data-act="setup">← ${m.name}</button>
+  <header class="res-head" data-c="${m.c}"><span class="tag">Fim da rodada${p ? ' · ' + esc(p.name) : ''} · ${LV_NAME[LAST.lvl]}</span><h1>${plural(LAST.score, 'ponto', 'pontos')}</h1><p>${parts.join(', ')}. ${math}${p ? ` Já está no placar de ${esc(p.name)}.` : ''}</p></header>
+  <div class="res-grid">
+    <section><h2>Acertou <span>${ok.length}</span></h2><ul class="wl ok">${ok.length ? ok.map(r => `<li>${esc(r.w)}</li>`).join('') : '<li class="none">Nenhuma desta vez.</li>'}</ul></section>
+    <section><h2>Passou <span>${miss.length}</span></h2><ul class="wl miss">${miss.length ? miss.map(r => `<li>${esc(r.w)}${tagFor(r)}</li>`).join('') : '<li class="none">Nenhuma. Rodada limpa.</li>'}</ul></section>
+  </div>
+  ${S.players.length ? standingsHTML(LAST.player) : ''}
+  <div class="res-actions"><button class="start" data-act="again">${nx ? `Próxima rodada: ${esc(nx.name)}` : 'Jogar outra rodada'}</button><button class="btn-line" data-act="home">Escolher outro jogo</button></div>`;
+}
+function standingsHTML(me){
+  const sorted = S.players.slice().sort((a, b) => b.pts - a.pts);
+  return `<section class="standings"><h2 class="sec-title">Placar</h2><ol>${sorted.map(p => `<li${p.id === me ? ' class="me"' : ''}><span>${esc(p.name)}<small>${LV_NAME[p.lvl]}</small></span><b>${p.pts}</b></li>`).join('')}</ol></section>`;
+}
+
+/* ================= Palco ================= */
+function openStage(mode){ stage.dataset.mode = mode; stage.dataset.c = MODES[mode].c; stage.hidden = false; document.body.classList.add('playing'); }
+function closeStage(){ stage.hidden = true; stage.innerHTML = ''; document.body.classList.remove('playing'); releaseAwake(); }
+stage.addEventListener('contextmenu', e => e.preventDefault());
+
+/* ---------- Cartas com tempo: Quem Sou Eu, Mímica, Palavra Proibida ---------- */
+let R = null;
+function buildPool(mode, lvl){
+  const map = new Map(); const cfg = S.settings[mode];
+  if (mode === 'proibida') {
+    PROIBIDA[lvl].concat(cfg.adult ? PROIBIDA18[lvl] : []).forEach(([w, ...f]) => map.set(w, {w, f, cat:'Explique sem dizer'}));
+    if (cfg.mine) customCards().forEach(c => { if (!map.has(c.w)) map.set(c.w, {w:c.w, f:c.f, cat:'Minha carta'}); });
+  } else {
+    cfg.cats.forEach(k => {
+      if (k === 'custom') lines(mode).forEach(w => { if (!map.has(w)) map.set(w, {w, cat:'Minhas palavras'}); });
+      else if (DECKS[k]) DECKS[k].lv[lvl].forEach(w => { if (!map.has(w)) map.set(w, {w, cat:DECKS[k].label}); });
+    });
+  }
+  return [...map.values()];
+}
+function makeDeck(key, pool){
+  const used = S.used[key] || (S.used[key] = new Set());
+  let fresh = pool.filter(c => !used.has(c.w));
+  if (fresh.length < Math.min(8, pool.length)) { pool.forEach(c => used.delete(c.w)); fresh = pool.slice(); }
+  return shuffle(fresh);
+}
+const scoreText = n => plural(n, 'ponto', 'pontos');
+function stageCardsHTML(mode){
+  const m = MODES[mode];
+  const actions = m.forehead
+    ? '<div class="zones" id="zones"><div class="zone top" data-k="skip">Toque em cima para passar</div><div class="zone bot" data-k="ok">Toque embaixo se acertou</div></div>'
+    : `<div class="st-actions"><button class="act" data-act="skip">Pular</button>${mode === 'proibida' ? '<button class="act bad" data-act="bad">Proibida!</button>' : ''}<button class="act ok" data-act="ok">Acertou</button></div>`;
+  return `<div class="st-top"><div class="st-time" id="st-time">${R.unlimited ? '0:00' : fmt(R.left)}</div><div class="st-score" id="st-score">${scoreText(0)}</div><button class="st-x" data-act="pause" aria-label="Pausar">${ICON_PAUSE}</button></div>
+  <div class="st-body"><div class="st-main"><div class="st-cat" id="st-cat"></div><div class="st-wordbox" id="st-box"><div class="st-word" id="st-word" aria-live="polite"></div></div></div>
+  ${mode === 'proibida' ? '<div class="st-forbid"><span>Não pode dizer</span><ul id="st-flist"></ul></div>' : ''}</div>
+  ${actions}
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <div class="ov" id="ov" hidden></div>`;
+}
+function startCards(mode){
+  const lvl = roundLevel(mode);
+  const pool = buildPool(mode, lvl);
+  if (!pool.length) { showErr(mode === 'proibida' ? 'Não há cartas neste nível.' : 'Escolha pelo menos uma categoria.'); return; }
+  audio();
+  const cfg = S.settings[mode];
+  const unlimited = mode === 'qse' && cfg.time === 0;
+  R = {mode, pool, lvl, mult:LV_MULT[lvl], deck:makeDeck(mode, pool), i:-1, card:null, answered:false, lock:false, results:[], score:0,
+    unlimited, left:cfg.time * 1000, base:0, t0:0, endAt:0, phase:'count', pausedFrom:null, player:cfg.player, timer:null, cd:null, lastTick:null};
+  openStage(mode); stage.innerHTML = stageCardsHTML(mode); keepAwake();
+  countdown(beginPlay);
+}
+function countdown(after){
+  const ov = $('#ov', stage);
+  const head = R.mode === 'qse' ? ['Celular na testa!', 'Tela virada para os amigos'] : R.mode === 'mimica' ? ['Prepare a mímica', 'Não mostre a tela para o seu time'] : ['Prepare as dicas', 'Alguém do outro time vigia as proibidas'];
+  let n = 3; R.phase = 'count';
+  const step = () => {
+    if (!R || R.phase !== 'count') return;
+    if (n === 0) { ov.hidden = true; SFX.go(); buzz(120); after(); return; }
+    ov.className = 'ov'; ov.innerHTML = `<p class="ov-kicker">${head[0]}</p><p class="ov-count">${n}</p><p class="ov-sub">${head[1]} · nível ${LV_NAME[R.lvl]}</p>`; ov.hidden = false;
+    SFX.count(); n--; R.cd = setTimeout(step, 1000);
+  };
+  step();
+}
+function beginPlay(){
+  if (!R) return; R.phase = 'play';
+  if (R.unlimited) R.t0 = performance.now(); else R.endAt = performance.now() + R.left;
+  if (!R.card || R.answered) nextCard();
+  runTimer();
+}
+function nextCard(){
+  R.i++; if (R.i >= R.deck.length) { R.deck = makeDeck(R.mode, R.pool); R.i = 0; }
+  R.card = R.deck[R.i]; R.answered = false; S.used[R.mode].add(R.card.w);
+  $('#st-cat', stage).textContent = `${R.card.cat} · ${LV_NAME[R.lvl]}`;
+  $('#st-word', stage).textContent = R.card.w;
+  const fl = $('#st-flist', stage); if (fl) fl.innerHTML = R.card.f.length ? R.card.f.map(x => `<li>${esc(x)}</li>`).join('') : '<li class="none">Nenhuma nesta carta</li>';
+  fitWord();
+}
+function fitWord(){
+  const box = $('#st-box', stage), w = $('#st-word', stage); if (!box || !w) return;
+  const H = box.clientHeight, W = box.clientWidth; if (!H || !W) return;
+  let lo = 14, hi = Math.min(H * 0.96, 280), best = lo;
+  for (let i = 0; i < 13; i++) { const mid = (lo + hi) / 2; w.style.fontSize = mid + 'px'; if (w.scrollWidth <= W + 1 && w.scrollHeight <= H) { best = mid; lo = mid; } else hi = mid; }
+  w.style.fontSize = Math.floor(best) + 'px';
+}
+function runTimer(){ clearInterval(R.timer); R.timer = setInterval(tick, 100); tick(); }
+function tick(){
+  if (!R || R.phase !== 'play') return;
+  const el = $('#st-time', stage);
+  if (R.unlimited) { el.textContent = fmtUp(R.base + performance.now() - R.t0); return; }
+  R.left = Math.max(0, R.endAt - performance.now());
+  el.textContent = fmt(R.left);
+  const s = Math.ceil(R.left / 1000); el.classList.toggle('hurry', s <= 5);
+  if (s <= 5 && s > 0 && s !== R.lastTick) { R.lastTick = s; SFX.tick(); }
+  if (R.left <= 0) endRound(false);
+}
+function answer(k){
+  if (!R || R.phase !== 'play' || R.lock || !R.card || R.answered) return;
+  R.answered = true; R.lock = true;
+  R.results.push({w:R.card.w, r:k});
+  if (k === 'ok') R.score++; else if (k === 'bad') R.score--;
+  $('#st-score', stage).textContent = scoreText(R.score * R.mult);
+  SFX[k](); buzz(k === 'ok' ? 60 : k === 'bad' ? [80, 50, 80] : 30);
+  const f = $('#flash', stage); f.dataset.k = k; f.textContent = k === 'ok' ? 'Acertou!' : k === 'bad' ? 'Proibida!' : 'Passou'; f.classList.add('show');
+  setTimeout(() => { if (R && R.phase === 'play' && R.answered) nextCard(); }, 300);
+  setTimeout(() => { f.classList.remove('show'); if (R) R.lock = false; }, 480);
+}
+function pause(){
+  if (!R) return;
+  if (R.phase === 'play') {
+    clearInterval(R.timer);
+    if (R.unlimited) R.base += performance.now() - R.t0; else R.left = Math.max(0, R.endAt - performance.now());
+    R.pausedFrom = 'play';
+  } else if (R.phase === 'count') { clearTimeout(R.cd); R.pausedFrom = 'count'; }
+  else return;
+  R.phase = 'pause';
+  const ov = $('#ov', stage); ov.className = 'ov';
+  ov.innerHTML = `<p class="ov-kicker">Pausado</p><p class="ov-big">${R.unlimited ? fmtUp(R.base) : fmt(R.left)}</p><p class="ov-sub">${scoreText(R.score * R.mult)} até agora.</p>
+  <div class="ov-btns"><button class="cta" data-act="resume">Continuar</button><button class="cta ghost" data-act="end">Encerrar e ver pontos</button></div>
+  <button class="note-link" data-act="quit">Sair sem contar pontos</button>`;
+  ov.hidden = false;
+}
+function resume(){
+  if (!R || R.phase !== 'pause') return;
+  if (R.pausedFrom === 'count') { countdown(beginPlay); return; }
+  $('#ov', stage).hidden = true; beginPlay();
+}
+function endRound(manual){
+  if (!R || R.phase === 'over') return;
+  clearInterval(R.timer); clearTimeout(R.cd);
+  R.phase = 'over';
+  if (R.card && !R.answered) R.results.push({w:R.card.w, r:manual ? 'open' : 'time'});
+  const score = R.score * R.mult;
+  LAST = {mode:R.mode, results:R.results, raw:R.score, mult:R.mult, lvl:R.lvl, score, player:R.player};
+  const p = playerById(R.player); if (p) { p.pts += score; save(); }
+  if (manual) { finishRound(); return; }
+  SFX.end(); buzz([200, 80, 200]);
+  const ov = $('#ov', stage); ov.className = 'ov ov-dark'; ov.innerHTML = '<p class="ov-time">Tempo!</p>'; ov.hidden = false;
+  R.cd = setTimeout(finishRound, 1400);
+}
+function finishRound(){ R = null; closeStage(); renderResults(); window.scrollTo(0, 0); }
+function quitRound(){ if (R) { clearInterval(R.timer); clearTimeout(R.cd); } R = null; closeStage(); renderSetup(S.mode); }
+
+stage.addEventListener('pointerdown', e => {
+  const z = e.target.closest('.zone'); if (!z || !R) return;
+  e.preventDefault(); answer(z.dataset.k);
+});
+
+/* ---------- Impostor ---------- */
+let I = null;
+function startImpostor(){
+  const cfg = S.settings.impostor;
+  const named = S.players.length >= 3;
+  const names = named ? S.players.map(p => p.name) : Array.from({length:cfg.n}, (_, i) => `Jogador ${i + 1}`);
+  const n = names.length; const imps = cfg.imps === 2 && n >= 6 ? 2 : 1;
+  const lvl = cfg.level;
+  const pool = [];
+  if (cfg.cat === 'custom') lines('impostor').forEach(w => pool.push({w, cat:'Minhas palavras'}));
+  else (cfg.cat === 'mix' ? IMP_DECKS.filter(k => !DECKS[k].adult) : [cfg.cat]).forEach(k => DECKS[k].lv[lvl].forEach(w => pool.push({w, cat:DECKS[k].label})));
+  if (!pool.length) { showErr('Escreva pelo menos uma palavra ou escolha outra categoria.'); return; }
+  const card = makeDeck('impostor', pool)[0]; S.used.impostor.add(card.w);
+  const order = shuffle([...Array(n).keys()]); const impSet = new Set(order.slice(0, imps));
+  const innocents = [...Array(n).keys()].filter(i => !impSet.has(i));
+  I = {names, ids:named ? S.players.map(p => p.id) : null, w:card.w, cat:card.cat, lvl, imp:impSet, turn:0, phase:'pass', starter:names[pick(innocents)], confirm:false, hint:cfg.hint, confirmT:null, scored:''};
+  audio(); openStage('impostor'); renderImp();
+}
+function renderImp(){
+  const name = I.names[I.turn]; let body = '';
+  if (I.phase === 'pass') {
+    body = `<p class="ov-kicker">Passe o celular para</p><p class="big-name">${esc(name)}</p><p class="ov-sub">Só ${esc(name)} pode olhar a próxima tela.</p><button class="cta" data-act="imp-reveal">Sou eu, mostrar</button>`;
+  } else if (I.phase === 'show') {
+    body = I.imp.has(I.turn)
+      ? `<p class="ov-kicker">${esc(name)}, você é o</p><p class="big-name">Impostor</p><p class="ov-sub">${I.hint ? `Dica: a palavra é da categoria <b>${esc(I.cat)}</b>. ` : ''}Ninguém sabe. Ouça os outros e finja que conhece a palavra.</p>`
+      : `<p class="ov-kicker">${esc(name)}, a palavra secreta é</p><p class="big-name">${esc(I.w)}</p><p class="ov-sub">Categoria: ${esc(I.cat)}. Não deixe ninguém ver.</p>`;
+    body += `<button class="cta" data-act="imp-hide">${I.turn < I.names.length - 1 ? 'Vi, esconder e passar' : 'Vi, esconder'}</button>`;
+  } else if (I.phase === 'talk') {
+    body = `<p class="ov-kicker">Todo mundo já viu</p><p class="big-name">${esc(I.starter)} começa</p>
+    <ol class="imp-rules"><li>Em roda, cada um diz uma palavra ligada ao segredo.</li><li>Depois de duas ou três voltas, contem até três e apontem para o suspeito.</li><li>Pegaram o impostor? Ele ainda ganha se adivinhar a palavra.</li></ol>
+    <button class="cta" data-act="imp-ask">${I.confirm ? 'Toque de novo para revelar' : 'Revelar o impostor'}</button>`;
+  } else {
+    const list = [...I.imp].map(i => esc(I.names[i])).join(' e ');
+    const mult = LV_MULT[I.lvl];
+    const scoring = !I.ids ? '' : I.scored
+      ? `<p class="ov-sub"><b>${esc(I.scored)}</b></p>`
+      : `<p class="ov-kicker">Quem ganhou a rodada?</p><div class="ov-btns"><button class="cta" data-act="imp-win" data-v="group">O grupo pegou (+${mult} cada)</button><button class="cta ghost" data-act="imp-win" data-v="imp">O impostor venceu (+${3 * mult})</button></div>`;
+    body = `<p class="ov-kicker">${I.imp.size > 1 ? 'Os impostores eram' : 'O impostor era'}</p><p class="big-name">${list}</p><p class="ov-sub">A palavra secreta era <b>${esc(I.w)}</b> (${esc(I.cat)}${I.cat === 'Minhas palavras' ? '' : ' · ' + LV_NAME[I.lvl]}).</p>
+    ${scoring}
+    <div class="ov-btns"><button class="cta${I.ids && !I.scored ? ' ghost' : ''}" data-act="imp-again">Nova rodada</button><button class="cta ghost" data-act="imp-quit">Voltar</button></div>`;
+  }
+  const progress = I.phase === 'pass' || I.phase === 'show' ? ` · ${I.turn + 1} de ${I.names.length}` : '';
+  I.lockUntil = performance.now() + 700;
+  stage.innerHTML = `<div class="st-top"><span class="st-label">Impostor${progress}</span><button class="st-x push" data-act="imp-quit" aria-label="Sair do Impostor">${ICON_X}</button></div><div class="st-center scroll"><div class="st-inner">${body}</div></div>`;
+}
+function impWin(who){
+  if (!I || !I.ids || I.scored) return;
+  const mult = LV_MULT[I.lvl];
+  if (who === 'group') {
+    I.ids.forEach((id, i) => { if (!I.imp.has(i)) { const p = playerById(id); if (p) p.pts += mult; } });
+    I.scored = `+${mult} para cada um que não era impostor.`;
+  } else {
+    const names = [];
+    I.ids.forEach((id, i) => { if (I.imp.has(i)) { const p = playerById(id); if (p) { p.pts += 3 * mult; names.push(p.name); } } });
+    I.scored = `+${3 * mult} para ${names.join(' e ')}.`;
+  }
+  save(); SFX.win(); renderImp();
+}
+
+/* ---------- Na Medida ---------- */
+let M = null;
+function medPool(){
+  const cfg = S.settings.medida;
+  const base = ESCALAS.concat(cfg.adult ? ESCALAS18 : []).map(([l, r]) => ({w:l + '|' + r, l, r}));
+  return cfg.mine ? base.concat(customScales().map(s => ({w:s.l + '|' + s.r, l:s.l, r:s.r}))) : base;
+}
+function startMedida(){
+  const cfg = S.settings.medida; if (cfg.player && !playerById(cfg.player)) cfg.player = null;
+  audio(); M = {deck:makeDeck('medida', medPool()), i:-1, player:cfg.player, phase:'secret', card:null, target:50, guess:50, pts:0, total:0, cards:0, lvl:'f'};
+  openStage('medida'); medNext();
+}
+function medNext(){
+  M.i++; if (M.i >= M.deck.length) { M.deck = makeDeck('medida', medPool()); M.i = 0; }
+  M.card = M.deck[M.i]; S.used.medida.add(M.card.w);
+  const p = playerById(M.player); M.lvl = p ? p.lvl : S.settings.medida.level;
+  M.target = 10 + Math.floor(Math.random() * 81); M.guess = 50; M.phase = 'secret'; M.pts = 0;
+  renderMed();
+}
+function rulerHTML(mode){
+  const t = M.target; const [r1, r2, r3] = BANDS[M.lvl]; const show = mode !== 'guess';
+  let ticks = ''; for (let i = 0; i <= 20; i++) ticks += `<i class="tk${i % 2 ? '' : ' major'}" style="left:${i * 5}%"></i>`;
+  let nums = ''; for (let v = 0; v <= 100; v += 10) nums += `<span style="left:${v}%">${v}</span>`;
+  const band = (r, cls) => `<b class="band ${cls}" style="left:${t - r}%;width:${2 * r}%"></b>`;
+  const a = (r1 + r2) / 2, b = (r2 + r3) / 2;
+  const bands = show ? band(r3, 'b1') + band(r2, 'b2') + band(r1, 'b3')
+    + `<span class="bl in" style="left:${t}%">3</span><span class="bl" style="left:${t - a}%">2</span><span class="bl" style="left:${t + a}%">2</span><span class="bl" style="left:${t - b}%">1</span><span class="bl" style="left:${t + b}%">1</span>` : '';
+  const input = mode === 'clue' ? '' : `<input type="range" id="med-guess" min="0" max="100" step="1" value="${M.guess}" aria-label="Palpite entre ${esc(M.card.l)} e ${esc(M.card.r)}"${mode === 'reveal' ? ' disabled' : ''}>`;
+  return `<div class="med"><div class="poles"><span>← ${esc(M.card.l)}</span><span>${esc(M.card.r)} →</span></div>
+  <div class="ruler"><div class="scale">${bands}${ticks}</div>${input}</div><div class="nums" aria-hidden="true">${nums}</div></div>`;
+}
+function renderMed(){
+  const p = playerById(M.player); let body = '';
+  const who = `${p ? ' · vez de ' + esc(p.name) : ''} · ${LV_NAME[M.lvl]}`;
+  if (M.phase === 'secret') {
+    body = `<p class="ov-kicker">Carta ${M.cards + 1}${who}</p><p class="big-msg">Só quem dá a dica olha a próxima tela</p><p class="ov-sub">O resto da roda vira o rosto por um instante.</p><button class="cta" data-act="med-show">Sou eu, mostrar o alvo</button>`;
+  } else if (M.phase === 'clue') {
+    body = `<p class="ov-kicker">Seu alvo está no ${M.target}</p>${rulerHTML('clue')}<p class="ov-sub">Pense numa coisa que fica bem nesse ponto entre <b>${esc(M.card.l)}</b> e <b>${esc(M.card.r)}</b> e diga em voz alta. Números não valem.</p><button class="cta" data-act="med-hide">Esconder e passar o celular</button>`;
+  } else if (M.phase === 'guess') {
+    body = `<p class="ov-kicker">Onde está o alvo?</p>${rulerHTML('guess')}<p class="ov-sub">Conversem e arrastem o marcador laranja. Quem deu a dica não pode ajudar.</p><button class="cta" data-act="med-lock">Travar palpite e revelar</button>`;
+  } else {
+    const label = ['Passou longe', 'Raspou', 'Pertinho!', 'Na mosca!'][M.raw];
+    const nx = nextPlayer(M.player);
+    body = `<div class="med-result"><p class="ov-kicker">Alvo no ${M.target}, palpite no ${M.guess}</p><p class="big-msg">${label}</p></div>${rulerHTML('reveal')}
+    <p class="ov-sub">${M.raw} × ${LV_MULT[M.lvl]} (${LV_NAME[M.lvl]}) = ${plural(M.pts, 'ponto', 'pontos')}${p ? ` para ${esc(p.name)}` : ''}. Total desta sessão: ${M.total}.</p>
+    <div class="ov-btns"><button class="cta" data-act="med-next">Próxima carta${nx ? ': ' + esc(nx.name) : ''}</button><button class="cta ghost" data-act="med-quit">Voltar</button></div>`;
+  }
+  M.lockUntil = performance.now() + 700;
+  stage.innerHTML = `<div class="st-top"><span class="st-label">Na Medida</span><button class="st-x push" data-act="med-quit" aria-label="Sair do Na Medida">${ICON_X}</button></div><div class="st-center scroll"><div class="st-inner">${body}</div></div>`;
+}
+function medLock(){
+  const d = Math.abs(M.guess - M.target); const [r1, r2, r3] = BANDS[M.lvl];
+  M.raw = d <= r1 ? 3 : d <= r2 ? 2 : d <= r3 ? 1 : 0;
+  M.pts = M.raw * LV_MULT[M.lvl];
+  M.total += M.pts; M.cards++;
+  const p = playerById(M.player); if (p && M.pts) { p.pts += M.pts; save(); }
+  M.phase = 'reveal'; renderMed();
+  if (M.raw >= 2) { SFX.win(); buzz(80); } else if (M.raw === 1) SFX.ok(); else SFX.skip();
+}
+
+/* ---------- Stop ---------- */
+let A = null;
+function stopCats(){ return S.settings.stop.cats.map(k => STOP_CATS[k].label).concat(lines('stop').slice(0, 12)); }
+function startStop(){
+  if (!stopCats().length) { showErr('Escolha pelo menos uma categoria.'); return; }
+  const cfg = S.settings.stop;
+  audio(); A = {phase:'roll', letter:'?', lvl:cfg.level, limit:cfg.time * 1000, start:0, timer:null, roll:null, lastTick:null, timeUp:false, finalText:''};
+  openStage('stop'); keepAwake(); stopRound();
+}
+function stopRound(){
+  clearInterval(A.timer); clearInterval(A.roll);
+  const pool = STOP_LETTERS[A.lvl].split(''); let avail = pool.filter(c => !S.usedLetters.has(c));
+  if (!avail.length) { pool.forEach(c => S.usedLetters.delete(c)); avail = pool.slice(); }
+  const final = pick(avail); S.usedLetters.add(final);
+  A.phase = 'roll'; A.letter = '?'; A.lastTick = null; A.timeUp = false; renderStop();
+  const el = $('#stop-letter', stage); let t = 0;
+  A.roll = setInterval(() => {
+    if (!A) return;
+    t += 80; el.textContent = pick(pool); SFX.tick();
+    if (t >= 1200) {
+      clearInterval(A.roll); A.letter = final; el.textContent = final; el.classList.add('land'); SFX.go(); buzz(120);
+      A.phase = 'play'; A.start = performance.now(); $('#stop-btn', stage).disabled = false;
+      A.timer = setInterval(stopTick, 200); stopTick();
+    }
+  }, 80);
+}
+function stopTick(){
+  if (!A || A.phase !== 'play') return;
+  const el = $('#stop-time', stage); const elapsed = performance.now() - A.start;
+  if (A.limit) {
+    const left = Math.max(0, A.limit - elapsed); el.textContent = fmt(left);
+    const s = Math.ceil(left / 1000); el.classList.toggle('hurry', s <= 10);
+    if (s <= 5 && s > 0 && s !== A.lastTick) { A.lastTick = s; SFX.tick(); }
+    if (left <= 0) stopEnd(true);
+  } else el.textContent = fmtUp(elapsed);
+}
+function stopEnd(timeUp){
+  if (!A || A.phase !== 'play') return;
+  clearInterval(A.timer); A.finalText = $('#stop-time', stage).textContent;
+  A.phase = 'over'; A.timeUp = timeUp; SFX.end(); buzz([200, 80, 200]); renderStop();
+}
+function renderStop(){
+  const timeText = A.phase === 'over' ? A.finalText : (A.limit ? fmt(A.limit) : '0:00');
+  const top = `<div class="st-top"><div class="st-time" id="stop-time">${timeText}</div><span class="st-label push">Stop · ${LV_NAME[A.lvl]}</span><button class="st-x" data-act="stop-quit" aria-label="Sair do Stop">${ICON_X}</button></div>`;
+  if (A.phase !== 'over') {
+    stage.innerHTML = top + `<div class="stop-body"><div class="stop-lw"><span class="st-cat">Letra</span><div class="stop-letter" id="stop-letter" aria-live="polite">${A.letter}</div></div>
+    <ul class="stop-cats">${stopCats().map(c => `<li>${esc(c)}</li>`).join('')}</ul></div>
+    <div class="st-actions"><button class="act bad stop-go" id="stop-btn" data-act="stop-stop"${A.phase === 'play' ? '' : ' disabled'}>Stop!</button></div>`;
+    return;
+  }
+  const k = LV_MULT[A.lvl];
+  const rows = S.players.length ? `<div class="stop-score"><p class="ov-kicker">Somem os pontos desta letra (×${k})</p><ul>${S.players.map(p => `<li><span class="sn">${esc(p.name)}</span><b>${p.pts}</b><span class="stop-btns"><button data-act="pts" data-id="${p.id}" data-d="${5 * k}" aria-label="Dar ${5 * k} pontos para ${esc(p.name)}">+${5 * k}</button><button data-act="pts" data-id="${p.id}" data-d="${10 * k}" aria-label="Dar ${10 * k} pontos para ${esc(p.name)}">+${10 * k}</button><button data-act="pts" data-id="${p.id}" data-d="${-5 * k}" aria-label="Tirar ${5 * k} pontos de ${esc(p.name)}">−${5 * k}</button></span></li>`).join('')}</ul></div>` : '';
+  stage.innerHTML = top + `<div class="st-center scroll"><div class="st-inner">
+    <p class="ov-kicker">Letra ${A.letter}</p><p class="big-name">${A.timeUp ? 'Tempo!' : 'Stop!'}</p>
+    <p class="ov-sub">Canetas para baixo. Leiam as respostas categoria por categoria: 10 pontos se só você escreveu, 5 se alguém repetiu, 0 se ficou em branco.</p>
+    ${rows}
+    <div class="ov-btns"><button class="cta" data-act="stop-next">Sortear outra letra</button><button class="cta ghost" data-act="stop-quit">Voltar</button></div>
+    <p class="ov-sub stop-used">Letras já sorteadas: ${[...S.usedLetters].join(' · ')}</p></div></div>`;
+}
+function stopQuit(){ if (A) { clearInterval(A.timer); clearInterval(A.roll); } A = null; closeStage(); renderSetup('stop'); }
+
+/* ================= Eventos ================= */
+function startCurrent(){
+  const kind = MODES[S.mode].kind;
+  if (kind === 'cards') startCards(S.mode); else if (kind === 'impostor') startImpostor(); else if (kind === 'medida') startMedida(); else startStop();
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t || t.disabled) return;
+  const a = t.dataset.act, v = t.dataset.v; const cfg = S.mode ? S.settings[S.mode] : null;
+  /* ignora toque duplo logo depois de trocar de tela, para ninguém ver a tela secreta da próxima pessoa */
+  if (/^(imp-|med-)/.test(a) && !/-quit$/.test(a)) { const g = a.startsWith('imp') ? I : M; if (!g || performance.now() < (g.lockUntil || 0)) return; }
+  switch (a) {
+    case 'home': renderHome(); window.scrollTo(0, 0); break;
+    case 'open': renderSetup(t.dataset.mode); window.scrollTo(0, 0); break;
+    case 'setup': renderSetup(S.mode); window.scrollTo(0, 0); break;
+    case 'sound': S.sound = !S.sound; save(); refreshTopbar(); if (S.sound) { audio(); SFX.ok(); } break;
+    case 'goto-placar': {
+      if (S.view !== 'home') renderHome();
+      const el = $('#placar'); if (el) { el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'}); const inp = $('#pname'); if (inp) inp.focus({preventScroll:true}); }
+      break;
+    }
+    case 'cat':
+      if (S.mode === 'impostor') cfg.cat = v;
+      else { const i = cfg.cats.indexOf(v); if (i >= 0) cfg.cats.splice(i, 1); else cfg.cats.push(v); }
+      save(); rerenderFields(); break;
+    case 'lvl': setRoundLevel(S.mode, v); save(); rerenderFields(); break;
+    case 'time': cfg.time = Number(v); save(); rerenderFields(); break;
+    case 'player': cfg.player = v || null; save(); rerenderFields(); break;
+    case 'adult': cfg.adult = v === '1'; save(); rerenderFields(); break;
+    case 'mine': cfg.mine = v === '1'; save(); rerenderFields(); break;
+    case 'imps': cfg.imps = Number(v); save(); rerenderFields(); break;
+    case 'hint': cfg.hint = v === '1'; save(); rerenderFields(); break;
+    case 'npl': cfg.n = Math.min(20, Math.max(3, cfg.n + Number(t.dataset.d))); save(); rerenderFields(); break;
+    case 'start': startCurrent(); break;
+    case 'again': { const c = S.settings[S.mode]; const nx = nextPlayer(c.player); if (nx) c.player = nx.id; save(); startCards(S.mode); break; }
+    case 'pts': { const p = playerById(t.dataset.id); if (p) { p.pts += Number(t.dataset.d); save(); refreshPlacar(); if (A && A.phase === 'over') renderStop(); } break; }
+    case 'del-player': S.players = S.players.filter(p => p.id !== t.dataset.id); save(); refreshPlacar(); break;
+    case 'reset-pts':
+      if (t.dataset.armed) { S.players.forEach(p => { p.pts = 0; }); save(); refreshPlacar(); }
+      else { t.dataset.armed = '1'; t.textContent = 'Toque de novo para zerar todos os pontos'; setTimeout(() => { if (t.isConnected) { delete t.dataset.armed; t.textContent = 'Zerar pontos'; } }, 3000); }
+      break;
+    /* cartas */
+    case 'ok': case 'skip': case 'bad': answer(a); break;
+    case 'pause': pause(); break;
+    case 'resume': resume(); break;
+    case 'end': endRound(true); break;
+    case 'quit': quitRound(); break;
+    /* impostor */
+    case 'imp-reveal': I.phase = 'show'; renderImp(); break;
+    case 'imp-hide': if (I.turn < I.names.length - 1) { I.turn++; I.phase = 'pass'; } else { I.phase = 'talk'; SFX.go(); } renderImp(); break;
+    case 'imp-ask':
+      if (!I.confirm) { I.confirm = true; renderImp(); clearTimeout(I.confirmT); I.confirmT = setTimeout(() => { if (I && I.phase === 'talk' && I.confirm) { I.confirm = false; renderImp(); } }, 3000); }
+      else { clearTimeout(I.confirmT); I.phase = 'reveal'; SFX.end(); buzz([120, 60, 120]); renderImp(); }
+      break;
+    case 'imp-win': impWin(v); break;
+    case 'imp-again': startImpostor(); break;
+    case 'imp-quit': if (I) clearTimeout(I.confirmT); I = null; closeStage(); renderSetup('impostor'); break;
+    /* na medida */
+    case 'med-show': M.phase = 'clue'; renderMed(); break;
+    case 'med-hide': M.phase = 'guess'; renderMed(); break;
+    case 'med-lock': medLock(); break;
+    case 'med-next': { const nx = nextPlayer(M.player); if (nx) { M.player = nx.id; S.settings.medida.player = nx.id; save(); } medNext(); break; }
+    case 'med-quit': M = null; closeStage(); renderSetup('medida'); break;
+    /* stop */
+    case 'stop-stop': stopEnd(false); break;
+    case 'stop-next': stopRound(); break;
+    case 'stop-quit': stopQuit(); break;
+  }
+});
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.id === 'med-guess' && M) { M.guess = Number(el.value); return; }
+  if (el.matches && el.matches('textarea[data-custom]')) {
+    const mode = el.dataset.custom; const before = customCount(mode);
+    S.custom[mode] = el.value; const after = customCount(mode);
+    const cfg = S.settings[mode];
+    if (mode === 'qse' || mode === 'mimica') { const i = cfg.cats.indexOf('custom'); if (after && !before && i < 0) cfg.cats.push('custom'); if (!after && i >= 0) cfg.cats.splice(i, 1); }
+    else if (mode === 'impostor') { if (after && !before) cfg.cat = 'custom'; if (!after && cfg.cat === 'custom') cfg.cat = 'mix'; }
+    else if (mode === 'proibida' || mode === 'medida') { if (after && !before) cfg.mine = true; }
+    saveSoon();
+    const cats = $('#chips-cats'); if (cats) cats.innerHTML = catChips(mode);
+    const deck = $('#chips-deck'); if (deck) deck.innerHTML = deckChips(mode);
+    const note = $('#custom-count'); if (note) note.textContent = customNote(mode);
+    const mix = $('#mix-note'); if (mix) mix.hidden = S.settings.impostor.cat !== 'mix';
+  }
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.matches && el.matches('select[data-plvl]')) { const p = playerById(el.dataset.plvl); if (p && LV.includes(el.value)) { p.lvl = el.value; save(); } }
+});
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'addp') return;
+  e.preventDefault();
+  const inp = $('#pname'); const name = inp.value.trim().slice(0, 24); if (!name) return;
+  if (S.players.length >= 20) { inp.value = ''; inp.placeholder = 'Limite de 20 nomes'; return; }
+  S.players.push({id:uid(), name, pts:0, lvl:'f'}); save(); inp.value = ''; refreshPlacar(); inp.focus();
+});
+document.addEventListener('keydown', e => {
+  if (stage.hidden || !R) return;
+  if (e.key === 'Escape') { e.preventDefault(); if (R.phase === 'pause') resume(); else pause(); return; }
+  if (R.phase !== 'play') return;
+  if (e.key === 'Enter' || e.key === 'ArrowDown') { e.preventDefault(); answer('ok'); }
+  else if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); answer('skip'); }
+  else if ((e.key === 'x' || e.key === 'X') && R.mode === 'proibida') answer('bad');
+});
+document.addEventListener('visibilitychange', () => { if (document.hidden && R && (R.phase === 'play' || R.phase === 'count')) pause(); });
+window.addEventListener('resize', () => { if (R) fitWord(); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (R) fitWord(); });
+
+renderHome();
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); });
+}
+</script>
+</body>
+</html>
