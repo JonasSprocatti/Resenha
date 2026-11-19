@@ -1,6 +1,6 @@
 /* Guarda o app no aparelho para funcionar sem internet.
    Ao mudar qualquer arquivo, aumente o número da versão abaixo. */
-const CACHE = 'resenha-v1';
+const CACHE = 'resenha-v2';
 const FONTS = 'resenha-fontes';
 const ASSETS = [
   '/',
@@ -31,6 +31,8 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
 
   if (url.origin === self.location.origin) {
+    /* a sala online sempre vai direto para a rede */
+    if (url.pathname.startsWith('/api/')) return;
     /* a página vem da rede quando tem internet, para as atualizações chegarem; sem internet, vem do aparelho */
     if (req.mode === 'navigate') {
       e.respondWith(

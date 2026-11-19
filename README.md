@@ -14,6 +14,18 @@ Seis jogos de festa num celular só: **Quem Sou Eu?**, **Mímica**, **Palavra Pr
 2. Em **Framework Preset**, escolha **Other**. Deixe **Build Command** e **Output Directory** em branco.
 3. Clique em **Deploy**. A partir daí, cada push na branch `main` publica a versão nova.
 
+## Sala online (Quem Sou Eu? · Todos juntos)
+
+No Quem Sou Eu?, a opção **Todos juntos** deixa cada pessoa jogar no próprio celular: uma pessoa cria a sala, os outros entram com o código de 4 letras e cada tela mostra uma carta diferente. Quem acerta primeiro ganha mais pontos: com 5 pessoas, o 1º ganha 4, o 2º ganha 3, e assim até o último, que ganha 0, tudo multiplicado pelo nível de cada um.
+
+A sala usa a função `api/room.js` e um banco Redis gratuito da Upstash:
+
+1. No projeto no Vercel, abra **Storage → Create Database → Upstash for Redis** e escolha o plano Free.
+2. Conecte o banco ao projeto, com o prefixo padrão. O Vercel cria as variáveis `KV_REST_API_URL` e `KV_REST_API_TOKEN`.
+3. Faça um novo deploy para a função enxergar as variáveis.
+
+As salas somem sozinhas depois de 6 horas sem uso.
+
 ## Instalar como app no celular
 
 - **Android (Chrome):** abra o site, toque no menu ⋮ e em **Instalar app** (ou **Adicionar à tela inicial**).
@@ -27,6 +39,7 @@ Seis jogos de festa num celular só: **Quem Sou Eu?**, **Mímica**, **Palavra Pr
 | `manifest.webmanifest` | Nome, cores e ícones do app instalado. |
 | `sw.js` | Guarda o app no celular para funcionar sem internet. |
 | `vercel.json` | Faz o celular sempre buscar a versão mais nova do `sw.js`. |
+| `api/room.js` | Guarda as salas do modo Todos juntos no Redis. |
 | `icon*.png`, `icon.svg`, `apple-touch-icon.png` | Ícones do app. |
 
 ## Mudar as cartas
