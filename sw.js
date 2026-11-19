@@ -1,6 +1,6 @@
 ﻿/* Guarda o app no aparelho para funcionar sem internet.
    Ao mudar qualquer arquivo, aumente o número da versão abaixo. */
-const CACHE = 'resenha-v3';
+const CACHE = 'resenha-v4';
 const FONTS = 'resenha-fontes';
 const ASSETS = [
   '/',

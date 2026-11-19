@@ -323,6 +323,28 @@ textarea{width:100%;min-height:110px;resize:vertical;font:500 16px/1.45 var(--f-
 .net-float .err{display:inline-block;background:var(--note-veil);padding:6px 10px;border-radius:8px}
 .cta:disabled{opacity:.45;cursor:default}
 
+/* Stop online: letra, campos para digitar, votação */
+.stage input,.stage textarea{-webkit-user-select:text;user-select:text}
+.snet-letter{font:400 clamp(64px,18vmin,140px)/1 var(--f-marker);margin:0}
+.snet-prog{font-size:13px;font-weight:700;opacity:.8;margin:0;max-width:60ch}
+.snet-form{display:grid;gap:10px;width:min(560px,100%);text-align:left}
+.snet-form label{display:grid;gap:4px;font-weight:700;font-size:14px}
+.snet-form input{font:600 18px var(--f-body);padding:12px 14px;border-radius:12px;border:2px solid var(--note-shade);background:var(--ruler-bg);color:var(--note-ink);width:100%;box-sizing:border-box}
+.snet-form input:focus{outline:none;border-color:var(--note-ink)}
+.act.snet-go{flex:none;width:min(560px,100%)}
+.net-list li.snet-row{grid-template-columns:minmax(0,1fr) auto}
+.snet-who{font-size:13px;font-weight:600;opacity:.75}
+.snet-ans{font:800 19px/1.2 var(--f-display);overflow-wrap:anywhere}
+.snet-ans.bad{text-decoration:line-through;opacity:.55}
+.snet-tally{font-size:12px;font-weight:700;opacity:.75;margin-top:2px}
+.snet-vote{display:flex;gap:6px}
+.snet-vote button{min-width:48px;height:44px;border-radius:10px;border:2px solid var(--note-ink);background:transparent;color:var(--note-ink);font-size:20px;font-weight:800;cursor:pointer}
+.snet-vote .yes[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--on-strong)}
+.snet-vote .no[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:var(--on-strong)}
+.snet-det{width:min(560px,100%);text-align:left;background:var(--note-veil);border-radius:12px;padding:10px 14px}
+.snet-det summary{font-weight:800;cursor:pointer}
+.snet-det p{margin:8px 0 0;font-size:14px;line-height:1.4}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition:none!important;animation:none!important}
   .note,.note:hover{transform:none}
@@ -537,8 +559,8 @@ const MODES = {
     blurb:'Uma régua entre dois opostos e um alvo escondido nela. Uma pessoa dá a dica; a roda tenta cravar o ponto.',
     how:['Quem dá a dica pega o celular e vê, em segredo, onde o alvo caiu na régua de 0 a 100.','Pense numa coisa que fica bem nesse ponto entre os dois extremos e fale em voz alta. Entre Gelado e Quente, perto do quente: “café recém-passado”.','Esconda o alvo e entregue o celular. A roda conversa e arrasta o marcador até onde acha que o alvo está.','Revelem: no centro vale 3, perto vale 2, raspando vale 1, multiplicado pelo nível.'],
     tip:'Dica boa é específica: um filme, uma comida, alguém que a roda toda conhece. Números não valem.'},
-  stop:{name:'Stop', c:'lilac', where:'Papel e caneta', people:'2+ pessoas', len:'2 min por letra', kind:'stop',
-    blurb:'A Adedonha de sempre: o celular sorteia a letra e todo mundo corre para preencher nome, cidade, animal e o resto.',
+  stop:{name:'Stop', c:'lilac', where:'Papel ou online', people:'2+ pessoas', len:'2 min por letra', kind:'stop',
+    blurb:'A Adedonha de sempre: no papel, com o celular sorteando a letra, ou online, cada um digitando no seu celular e a roda votando nas respostas.',
     how:['Cada pessoa pega papel e caneta e escreve as categorias em colunas.','Toque em Sortear a letra. Todo mundo preenche cada categoria com uma palavra que comece com ela.','Quem terminar primeiro grita “Stop!” e toca no botão. Se tiver tempo marcado, o celular avisa quando acabar.','Leiam as respostas: 10 pontos se só você escreveu, 5 se alguém repetiu, 0 se ficou em branco.'],
     tip:'Combinem antes se apelido vale como nome e se marca conta como objeto.'}
 };
@@ -583,7 +605,7 @@ const DEFAULTS = {
   proibida:{time:60, player:null, adult:false, mine:true, level:'f'},
   impostor:{cat:'mix', n:5, imps:1, hint:true, level:'f'},
   medida:{adult:false, mine:true, player:null, level:'f'},
-  stop:{cats:['nome','cep','animal','fruta','cor','objeto','comida','profissao'], time:0, level:'m'}
+  stop:{cats:['nome','cep','animal','fruta','cor','objeto','comida','profissao'], time:0, level:'m', way:'paper'}
 };
 function load(){ try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } }
 const saved = load() || {};
@@ -774,30 +796,46 @@ function settingsHTML(mode){
     h += field('Cartas', `<div class="chips" id="chips-deck">${deckChips(mode)}</div>`);
     h += customField(mode);
   } else {
+    const online = cfg.way === 'online';
+    h += field('Como jogar', `<div class="chips">${chip('way', 'paper', 'Papel e caneta', !online)}${chip('way', 'online', 'Online, cada um no seu celular', online)}</div>`);
+    if (online) {
+      const g = netGate('Uma pessoa cria a sala e passa o código. Todo mundo escreve as respostas no próprio celular, e o Stop só libera com tudo preenchido. Depois do Stop, a roda vota, categoria por categoria, nas respostas que não valem: 10 pontos se só você escreveu, 5 se alguém repetiu, vezes o nível.');
+      if (g.blocked) return h + g.h;
+      h += g.h + netNameField() + netJoinField() + '<h3 class="field-h">Ou crie a sala com estas regras</h3>';
+    }
     h += levelField(mode);
     h += field('Categorias', `<div class="chips">${catChips(mode)}</div><p class="field-note">${plural(cfg.cats.length, 'categoria marcada', 'categorias marcadas')}. Entre 6 e 10 costuma ser o ideal.</p>`);
     h += customField(mode);
     h += field('Tempo por letra', `<div class="chips">${chip('time', '0', 'Sem limite, vale o Stop!', cfg.time === 0)}${[60, 90, 120, 180].map(t => chip('time', String(t), `${t} s`, cfg.time === t)).join('')}</div>`);
-    h += field('Pontos', S.players.length
+    if (!online) h += field('Pontos', S.players.length
       ? `<p class="field-note">No fim de cada letra dá para somar os pontos de cada um direto na tela, já multiplicados ${cfg.level === 'x' ? 'pelo nível sorteado' : 'por ' + LV_MULT[cfg.level]}.</p>`
       : '<p class="field-note">Adicione nomes no <button class="inline-link" data-act="goto-placar">placar</button> para somar os pontos no fim de cada letra.</p>');
   }
   return h;
 }
 const START_LABEL = {cards:'Começar a rodada', impostor:'Sortear a palavra secreta', medida:'Tirar a primeira carta', stop:'Sortear a letra'};
+const isOnline = mode => (mode === 'qse' && S.settings.qse.way === 'group') || (mode === 'stop' && S.settings.stop.way === 'online');
 function startButton(mode){
-  const group = mode === 'qse' && S.settings.qse.way === 'group';
-  if (group && NET.avail !== true) return '';
-  return `<button class="start" id="start" data-act="start">${group ? 'Criar sala' : START_LABEL[MODES[mode].kind]}</button>`;
+  const online = isOnline(mode);
+  if (online && NET.avail !== true) return '';
+  return `<button class="start" id="start" data-act="start">${online ? 'Criar sala' : START_LABEL[MODES[mode].kind]}</button>`;
 }
+function netGate(how){
+  const h = field('Como funciona', `<p class="field-note">${how}</p>`);
+  if (NET.avail === null) return {h:h + '<p class="field-note">Conferindo se a sala online está disponível…</p>', blocked:true};
+  if (NET.avail === false) return {h:h + '<p class="field-note">O jogo online precisa do site publicado e de internet. Abra o Resenha pelo endereço do site no Vercel para jogar assim.</p>', blocked:true};
+  if (NET.avail === 'nodb') return {h:h + `<p class="err">${NET_ERR.no_db}</p>`, blocked:true};
+  return {h, blocked:false};
+}
+function netNameField(){ return field('Seu nome', `<label class="sr" for="me-name">Seu nome</label><input class="text-in" id="me-name" maxlength="24" autocomplete="nickname" placeholder="Como a roda te chama" value="${esc(S.me.name)}">`); }
+function netJoinField(){ return field('Entrar numa sala', `<div class="join"><label class="sr" for="join-code">Código da sala</label><input id="join-code" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD"><button type="button" class="btn-ink" data-act="net-join">Entrar</button></div>${NET.last ? `<button class="linkbtn" data-act="net-rejoin">Voltar para a sala ${esc(NET.last.code)}</button>` : ''}`); }
 function netSetupHTML(){
-  let h = field('Como funciona', '<p class="field-note">Uma pessoa cria a sala e passa o código. Cada um entra no próprio celular, todo mundo põe o celular na testa e cada tela mostra uma carta diferente. Quem acertar primeiro ganha mais pontos; o último não pontua.</p>');
-  if (NET.avail === null) return h + '<p class="field-note">Conferindo se a sala online está disponível…</p>';
-  if (NET.avail === false) return h + '<p class="field-note">O Todos juntos precisa do site publicado e de internet. Abra o Resenha pelo endereço do site no Vercel para jogar assim.</p>';
-  if (NET.avail === 'nodb') return h + `<p class="err">${NET_ERR.no_db}</p>`;
-  h += field('Seu nome', `<label class="sr" for="me-name">Seu nome</label><input class="text-in" id="me-name" maxlength="24" autocomplete="nickname" placeholder="Como a roda te chama" value="${esc(S.me.name)}">`);
+  const g = netGate('Uma pessoa cria a sala e passa o código. Cada um entra no próprio celular, todo mundo põe o celular na testa e cada tela mostra uma carta diferente. Quem acertar primeiro ganha mais pontos; o último não pontua.');
+  if (g.blocked) return g.h;
+  let h = g.h;
+  h += netNameField();
   h += field('Seu nível', `<div class="chips">${LV_ALL.map(x => chip('me-lvl', x, `${LV_NAME[x]} <small>${multLabel(x)}</small>`, S.me.lvl === x)).join('')}</div><p class="field-note">${S.me.lvl === 'x' ? 'Cada carta sua vem de um nível sorteado e vale o multiplicador dele, de ×1 a ×5.' : `Suas cartas vêm deste nível e seus pontos valem ×${LV_MULT[S.me.lvl]}.`}</p>`);
-  h += field('Entrar numa sala', `<div class="join"><label class="sr" for="join-code">Código da sala</label><input id="join-code" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD"><button type="button" class="btn-ink" data-act="net-join">Entrar</button></div>${NET.last ? `<button class="linkbtn" data-act="net-rejoin">Voltar para a sala ${esc(NET.last.code)}</button>` : ''}`);
+  h += netJoinField();
   h += field('Ou crie a sala: as cartas saem destas categorias', `<div class="chips" id="chips-cats">${catChips('qse')}</div>`);
   h += customField('qse');
   return h;
@@ -1189,11 +1227,13 @@ const NET_ERR = {
   no_room:'Não achei essa sala. Confira o código.', full:'A sala está cheia: o limite é 20 pessoas.', few_players:'Precisa de pelo menos 2 pessoas na sala.',
   not_host:'Só quem criou a sala pode fazer isso.', no_db:'A sala online ainda não está ligada ao banco de dados no Vercel.',
   db:'O banco de dados não respondeu. Tente de novo.', closed:'Essa rodada já acabou.', too_early:'Espere a carta aparecer.',
-  net:'Sem conexão com a sala. Confira a internet.'
+  net:'Sem conexão com a sala. Confira a internet.', not_filled:'Preencha todas as categorias para dar Stop.',
+  wait:'Espere uns segundos: ainda estão chegando as últimas respostas.', wrong_game:'Essa sala é de outro jogo.',
+  bad:'Algo veio errado. Tente de novo.', not_in_round:'Você entra na próxima rodada.'
 };
 const netNow = () => Date.now() + NET.offset;
 function netSaveSession(){
-  const s = {code:NET.code, pid:NET.pid, name:(S.me.name || '').trim()};
+  const s = {code:NET.code, pid:NET.pid, game:NET.game, name:(S.me.name || '').trim()};
   try { sessionStorage.setItem('resenha-sala', JSON.stringify(s)); } catch (e) {}
   try { localStorage.setItem('resenha-sala', JSON.stringify(s)); } catch (e) {}
   NET.last = s;
@@ -1214,7 +1254,7 @@ async function netApi(body){
 }
 async function netGet(){
   let r;
-  try { r = await fetch(`/api/room?code=${encodeURIComponent(NET.code)}`, {cache:'no-store'}); }
+  try { r = await fetch(`/api/room?code=${encodeURIComponent(NET.code)}&pid=${encodeURIComponent(NET.pid)}`, {cache:'no-store'}); }
   catch (e) { throw {code:'net'}; }
   const j = await r.json().catch(() => ({}));
   if (j.now) NET.offset = j.now - Date.now();
@@ -1227,11 +1267,12 @@ async function netProbe(){
     if (r.status === 503) NET.avail = 'nodb';
     else { const j = await r.json(); NET.avail = !!(j && j.ok); }
   } catch (e) { NET.avail = false; }
-  if (S.view === 'setup' && S.mode === 'qse' && S.settings.qse.way === 'group') renderSetup('qse');
+  if (S.view === 'setup' && isOnline(S.mode)) renderSetup(S.mode);
 }
-function netEnter(code, pid){
-  NET.code = code; NET.pid = pid; NET.st = null; NET.sig = ''; NET.err = ''; NET.leaveArmed = false;
-  netSaveSession(); audio(); openStage('qse'); keepAwake();
+function netEnter(code, pid, game){
+  NET.game = game === 'stop' ? 'stop' : 'qse';
+  NET.code = code; NET.pid = pid; NET.st = null; NET.sig = ''; NET.err = ''; NET.leaveArmed = false; NET.draft = {}; NET.view = '';
+  netSaveSession(); audio(); openStage(NET.game); keepAwake();
   clearInterval(NET.tick); NET.tick = setInterval(netTick, 200);
   netRender(true); netLoop();
 }
@@ -1239,7 +1280,8 @@ function netExit(showError){
   clearTimeout(NET.poll); clearInterval(NET.tick);
   const err = NET.err;
   NET.code = null; NET.pid = null; NET.st = null; NET.sig = ''; NET.err = ''; NET.leaveArmed = false;
-  closeStage(); renderSetup('qse');
+  clearTimeout(NET.saveT);
+  closeStage(); renderSetup(NET.game === 'stop' ? 'stop' : 'qse');
   if (showError && err) showErr(err);
 }
 async function netLoop(){
@@ -1256,6 +1298,7 @@ async function netLoop(){
 function netApply(st){
   const prev = NET.st; NET.st = st;
   if (!st.players.some(p => p.pid === NET.pid)) { NET.err = 'Você não está mais nesta sala.'; netClearSession(); netExit(true); return; }
+  if (NET.game === 'stop') { snetApply(prev, st); return; }
   const r = st.round, pr = prev && prev.round;
   if (r && pr && pr.n === r.n) {
     if (r.over && !pr.over) { SFX.end(); buzz([200, 80, 200]); }
@@ -1264,8 +1307,9 @@ function netApply(st){
   netRender(false);
 }
 function netTick(){
+  if (NET.game === 'stop') { snetTick(); return; }
   const st = NET.st;
-  if (!NET.code || !st || !st.round || st.round.over || !st.round.cards[NET.pid]) return;
+  if (!NET.code || !st || !st.round || st.round.over || !st.round.cards || !st.round.cards[NET.pid]) return;
   const left = st.round.startAt - netNow();
   const el = $('#net-count', stage);
   if (left > 0) {
@@ -1286,7 +1330,8 @@ function netPhase(){
 function netTop(label, canLeave, hostEnd){
   return `<div class="st-top"><span class="st-label">${label}</span>${hostEnd ? '<button class="mini push" data-act="net-end">Encerrar rodada</button>' : ''}${canLeave ? `<button class="st-x${hostEnd ? '' : ' push'}" data-act="net-leave" aria-label="Sair da sala">${ICON_X}</button>` : ''}</div>`;
 }
-function netRender(force){
+function netRender(force){ return NET.game === 'stop' ? snetRender(force) : qnetRender(force); }
+function qnetRender(force){
   if (!NET.code) return;
   const st = NET.st; const ph = netPhase();
   const sig = JSON.stringify([ph, NET.err, NET.leaveArmed, NET.busy, st && st.host, st && st.round && [st.round.n, st.round.over], st && st.hits.map(h => h.pid), st && st.players.map(p => [p.pid, p.name, p.lvl, p.pts])]);
@@ -1353,11 +1398,13 @@ function netRender(force){
     <button class="note-link" data-act="net-leave">${NET.leaveArmed ? 'Toque de novo para sair da sala' : 'Sair da sala'}</button></div></div>`;
 }
 function netName(){ const n = (S.me.name || '').trim(); if (!n) showErr('Escreva seu nome antes de entrar na sala.'); return n; }
-async function netCreate(){
+async function netCreate(game){
+  game = game === 'stop' ? 'stop' : 'qse';
   const name = netName(); if (!name) return;
   if (NET.avail !== true) { showErr(NET.avail === 'nodb' ? NET_ERR.no_db : NET_ERR.net); return; }
-  if (!S.settings.qse.cats.length) { showErr('Escolha pelo menos uma categoria para as cartas.'); return; }
-  try { const j = await netApi({action:'create', name, lvl:S.me.lvl}); netEnter(j.code, j.pid); }
+  if (game === 'qse' && !S.settings.qse.cats.length) { showErr('Escolha pelo menos uma categoria para as cartas.'); return; }
+  if (game === 'stop' && !stopCats().length) { showErr('Escolha pelo menos uma categoria.'); return; }
+  try { const j = await netApi({action:'create', name, lvl:S.me.lvl, game}); netEnter(j.code, j.pid, j.game || game); }
   catch (e) { showErr(NET_ERR[e.code] || NET_ERR.net); }
 }
 async function netJoinCode(code){
@@ -1365,7 +1412,7 @@ async function netJoinCode(code){
   if (!/^[A-Z]{4}$/.test(code)) { showErr('Digite o código de 4 letras da sala.'); return; }
   /* só volta como o mesmo jogador se for a mesma sala e o mesmo nome; outra pessoa no mesmo aparelho entra como nova */
   const prior = NET.last && NET.last.code === code && (NET.last.name || '').toLowerCase() === name.toLowerCase() ? NET.last.pid : '';
-  try { const j = await netApi({action:'join', code, pid:prior, name, lvl:S.me.lvl}); netEnter(j.code, j.pid); }
+  try { const j = await netApi({action:'join', code, pid:prior, name, lvl:S.me.lvl}); netEnter(j.code, j.pid, j.game); }
   catch (e) { showErr(NET_ERR[e.code] || NET_ERR.net); }
 }
 function netJoin(){ const el = $('#join-code'); netJoinCode(el ? el.value.trim().toUpperCase() : ''); }
@@ -1417,10 +1464,182 @@ async function netLeave(){
   try { await netApi({action:'leave', code, pid}); } catch (e) {}
 }
 
+/* ---------- Stop online ---------- */
+function snetPhase(){
+  const st = NET.st; if (!st) return 'loading';
+  const r = st.round;
+  if (!r || !r.cats || r.phase === 'done') return 'lobby';
+  if (!(r.players || []).includes(NET.pid)) return 'spectate';
+  if (r.phase === 'play') return netNow() < r.startAt ? 'count' : 'play';
+  return 'review';
+}
+const snetLetter = t => { const m = (t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().match(/[A-Z0-9]/); return m ? m[0] : ''; };
+function snetAllFilled(){ const r = NET.st && NET.st.round; if (!r || !r.cats) return false; const d = NET.draft || {}; return r.cats.every((_, i) => (d[i] || '').trim()); }
+function snetProgText(){
+  const st = NET.st; const r = st.round;
+  const nameOf = id => { const p = st.players.find(x => x.pid === id); return p ? p.name : 'Alguém'; };
+  const mineN = r.cats.filter((_, i) => ((NET.draft || {})[i] || '').trim()).length;
+  return r.players.map(id => `${nameOf(id)} ${id === NET.pid ? mineN : ((st.filled || {})[id] || 0)}/${r.cats.length}`).join(' · ');
+}
+function snetProgress(){
+  if (!NET.st || !NET.st.round || !NET.st.round.cats) return;
+  const p = $('#snet-prog', stage); if (p) p.textContent = snetProgText();
+  const b = $('#snet-stop', stage); if (b) b.disabled = !snetAllFilled() || NET.busy;
+  const e = $('#snet-err', stage); if (e) e.textContent = NET.err || '';
+}
+function snetFlush(){
+  const r = NET.st && NET.st.round; clearTimeout(NET.saveT);
+  if (!NET.code || !r || !r.cats) return Promise.resolve();
+  return netApi({action:'sanswer', code:NET.code, pid:NET.pid, n:r.n, answers:NET.draft || {}}).catch(() => {});
+}
+function snetApply(prev, st){
+  const r = st.round, pr = prev && prev.round;
+  if (r && (!pr || pr.n !== r.n)) { NET.draft = Object.assign({}, st.mine || {}); NET.endPolled = false; }
+  else if (r && r.phase === 'play' && st.mine) Object.keys(st.mine).forEach(k => { if (NET.draft[k] == null) NET.draft[k] = st.mine[k]; });
+  if (r && pr && pr.n === r.n && pr.phase === 'play' && r.phase === 'review') { snetFlush(); SFX.end(); buzz([200, 80, 200]); }
+  if (r && pr && pr.n === r.n && pr.phase === 'review' && r.phase === 'done') SFX.win();
+  netRender(false);
+}
+function snetTick(){
+  const st = NET.st; const r = st && st.round;
+  if (!NET.code || !r || !r.cats || r.phase !== 'play' || !(r.players || []).includes(NET.pid)) return;
+  const now = netNow();
+  if (now < r.startAt) {
+    const el = $('#net-count', stage); const n = Math.max(1, Math.ceil((r.startAt - now) / 1000));
+    if (!el) { netRender(true); return; }
+    if (el.textContent !== String(n)) { el.textContent = n; SFX.count(); }
+    return;
+  }
+  if ($('#net-count', stage)) { SFX.go(); buzz(120); netRender(true); const f = $('#snet-0', stage); if (f) f.focus(); return; }
+  const t = $('#snet-time', stage);
+  if (t) { t.textContent = r.endAt ? fmt(r.endAt - now) : fmtUp(now - r.startAt); if (r.endAt) t.classList.toggle('hurry', r.endAt - now <= 10000); }
+  if (r.endAt && now > r.endAt + 400 && !NET.endPolled) { NET.endPolled = true; snetFlush(); setTimeout(netLoop, 300); }
+}
+function snetRender(force){
+  if (!NET.code) return;
+  const st = NET.st; const ph = snetPhase(); const r = st && st.round;
+  const grace = ph === 'review' && netNow() < (r.stopAt || 0) + 3000;
+  const sig = ph === 'play' ? JSON.stringify(['play', r.n]) : JSON.stringify([ph, grace, NET.err, NET.leaveArmed, NET.busy, st && st.host, r && [r.n, r.phase, r.reviewIdx], st && st.players.map(p => [p.pid, p.name, p.pts]), ph === 'review' ? [st.votes, st.answers] : null, ph === 'lobby' ? [S.settings.stop.level, S.settings.stop.time] : null]);
+  if (!force && sig === NET.sig) { if (ph === 'play') snetProgress(); return; }
+  NET.sig = sig;
+  const view = ph + ':' + (r ? r.n + ':' + r.reviewIdx : '');
+  const old = $('.st-center', stage); const keep = old && view === NET.view ? old.scrollTop : 0; NET.view = view;
+  const code = esc(NET.code);
+  const err = NET.err ? `<p class="err">${esc(NET.err)}</p>` : '';
+  const isHost = st && st.host === NET.pid;
+  const nameOf = id => { const p = st && st.players.find(x => x.pid === id); return p ? p.name : 'Alguém que saiu'; };
+  let html;
+  if (ph === 'loading') {
+    html = `${netTop('Stop online', true)}<div class="st-center"><p class="ov-kicker">Entrando na sala</p><p class="net-code">${code}</p>${err}</div>`;
+  } else if (ph === 'count') {
+    const left = Math.max(1, Math.ceil((r.startAt - netNow()) / 1000));
+    html = `${netTop(`Sala ${code} · rodada ${r.n}`, false)}<div class="st-center"><p class="ov-kicker">Preparem os dedos</p><p class="ov-count" id="net-count">${left}</p><p class="ov-sub">${plural(r.cats.length, 'categoria', 'categorias')} · ${LV_NAME[r.lvl]} ×${LV_MULT[r.lvl]}${r.endAt ? ' · ' + fmt(r.endAt - r.startAt) : ' · sem limite de tempo'}</p></div>`;
+  } else if (ph === 'play') {
+    const d = NET.draft || {};
+    html = `<div class="st-top"><div class="st-time" id="snet-time">${r.endAt ? fmt(r.endAt - netNow()) : fmtUp(netNow() - r.startAt)}</div><span class="st-label push">Rodada ${r.n} · ${LV_NAME[r.lvl]}</span>${isHost ? '<button class="mini" data-act="net-end">Encerrar</button>' : ''}</div>
+    <div class="st-center scroll"><div class="st-inner">
+      <p class="snet-letter" aria-label="Letra ${r.letter}">${r.letter}</p>
+      <p class="snet-prog" id="snet-prog" aria-live="polite"></p>
+      <form class="snet-form" id="snet-form" autocomplete="off">${r.cats.map((c, i) => `<label for="snet-${i}"><span>${esc(c)}</span><input id="snet-${i}" class="snet-in" data-i="${i}" maxlength="40" autocomplete="off" autocapitalize="sentences" spellcheck="false" enterkeyhint="next" placeholder="${r.letter}…" value="${esc(d[i] || '')}"></label>`).join('')}</form>
+      <button class="act bad stop-go snet-go" id="snet-stop" data-act="snet-stop" disabled>Stop!</button>
+      <p class="net-small">O Stop só libera com todas as categorias preenchidas.</p><p class="err" id="snet-err"></p>
+    </div></div>`;
+  } else if (ph === 'review') {
+    const i = r.reviewIdx; const ans = st.answers || {}; const votes = st.votes || {};
+    const rows = r.players.map(id => {
+      const t = (ans[id] || {})[i] || '';
+      const auto = !t ? 'em branco' : (snetLetter(t) !== r.letter ? `não começa com ${r.letter}` : '');
+      const others = r.players.filter(x => x !== id);
+      const no = others.filter(v => votes[`${v}|${id}|${i}`] === '0').length;
+      const out = !auto && no > others.length - no;
+      const mine = votes[`${NET.pid}|${id}|${i}`];
+      const ui = id === NET.pid || auto ? '' : `<span class="snet-vote"><button class="yes" data-act="snet-vote" data-id="${id}" data-v="1" aria-pressed="${mine !== '0'}" aria-label="Vale: ${esc(t)}">✓</button><button class="no" data-act="snet-vote" data-id="${id}" data-v="0" aria-pressed="${mine === '0'}" aria-label="Não vale: ${esc(t)}">✗</button></span>`;
+      const note = auto || (out ? 'a roda anulou' : no ? plural(no, 'voto contra', 'votos contra') : '');
+      return `<li class="snet-row${id === NET.pid ? ' me' : ''}"><div><div class="snet-who">${esc(nameOf(id))}${id === NET.pid ? ' · você' : ''}</div><div class="snet-ans${auto || out ? ' bad' : ''}">${t ? esc(t) : '—'}</div>${note ? `<div class="snet-tally">${note}</div>` : ''}</div>${ui}</li>`;
+    }).join('');
+    html = `${netTop(`Sala ${code} · rodada ${r.n}`, false)}<div class="st-center scroll"><div class="st-inner">
+      <p class="ov-kicker">${r.stoppedBy ? `Stop de ${esc(nameOf(r.stoppedBy))}` : 'Acabou o tempo'} · letra ${r.letter}</p>
+      <p class="big-msg">${esc(r.cats[i])}</p>
+      <p class="net-small">Categoria ${i + 1} de ${r.cats.length}. Toque em ✗ nas respostas que não valem.</p>
+      <ul class="net-list">${rows}</ul>
+      ${isHost ? `<button class="cta" data-act="snet-next"${grace || NET.busy ? ' disabled' : ''}>${grace ? 'Chegando as respostas…' : i < r.cats.length - 1 ? 'Próxima categoria' : 'Ver a pontuação'}</button>` : `<p class="ov-sub">Esperando ${esc(nameOf(st.host))} passar para a próxima.</p>`}${err}
+    </div></div>`;
+  } else if (ph === 'spectate') {
+    html = `${netTop(`Sala ${code}`, true)}<div class="st-center scroll"><div class="st-inner"><p class="ov-kicker">Rodada ${r.n} em andamento · letra ${r.letter}</p><p class="big-msg">Você entra na próxima</p>${err}</div></div>`;
+  } else {
+    let results = '';
+    if (r && r.cats && r.phase === 'done' && r.results) {
+      const ids = (r.players || []).filter(id => r.results[id]);
+      const order = ids.slice().sort((a, b) => r.results[b].pts - r.results[a].pts);
+      results = `<p class="ov-kicker">Fim da rodada ${r.n} · letra ${r.letter} · ${LV_NAME[r.lvl]} ×${LV_MULT[r.lvl]}</p>
+      <ol class="net-list">${order.map((id, k) => `<li${id === NET.pid ? ' class="me"' : ''}><span class="pos">${k + 1}º</span><span class="nm">${esc(nameOf(id))}<small>${r.results[id].raw} pontos × ${LV_MULT[r.lvl]}</small></span><span class="pt">+${r.results[id].pts}</span></li>`).join('')}</ol>
+      <details class="snet-det"><summary>Ver as respostas</summary>${r.cats.map((c, i) => `<p><b>${esc(c)}:</b> ${ids.map(id => { const x = r.results[id].per[i] || {}; return `${esc(nameOf(id))}: ${x.t ? (x.ok ? esc(x.t) : `<s>${esc(x.t)}</s>`) : '—'} (${x.pts || 0})`; }).join(' · ')}</p>`).join('')}</details>`;
+    }
+    const ranked = st.players.slice().sort((a, b) => b.pts - a.pts || a.t - b.t);
+    const cfg = S.settings.stop; const cats = stopCats();
+    const hostBox = isHost
+      ? `<p class="ov-kicker">${r ? 'Próxima rodada' : 'Regras da rodada'}</p>
+        <div class="chips">${LV_ALL.map(x => chip('snet-lvl', x, `${LV_NAME[x]} <small>${multLabel(x)}</small>`, cfg.level === x)).join('')}</div>
+        <div class="chips">${[0, 60, 90, 120, 180].map(t => chip('snet-time', String(t), t ? `${t} s` : 'Sem limite', cfg.time === t)).join('')}</div>
+        <p class="net-small">${plural(cats.length, 'categoria', 'categorias')}: ${esc(cats.join(', '))}.</p>
+        <button class="cta" data-act="snet-start"${st.players.length < 2 || NET.busy ? ' disabled' : ''}>${r ? 'Próxima rodada' : 'Começar a rodada'}</button>${st.players.length < 2 ? '<p class="net-small">Esperando mais alguém entrar com o código.</p>' : ''}`
+      : `<p class="ov-sub">Esperando ${esc(nameOf(st.host))} começar a ${r ? 'próxima ' : ''}rodada.</p>`;
+    html = `${netTop('Stop online', true)}<div class="st-center scroll"><div class="st-inner">
+      ${results}
+      <p class="ov-kicker">Código da sala</p><p class="net-code">${code}</p>
+      <p class="ov-sub">Cada pessoa abre <b>${esc(location.host)}</b>, escolhe Stop → Online e digita este código.</p>
+      <p class="ov-kicker">Placar da sala</p>
+      <ul class="net-list">${ranked.map((p, i) => `<li${p.pid === NET.pid ? ' class="me"' : ''}><span class="pos">${r ? `${i + 1}º` : '·'}</span><span class="nm">${esc(p.name)}${p.pid === st.host ? '<span class="net-tag">admin</span>' : ''}${p.pid === NET.pid ? '<span class="net-tag">você</span>' : ''}</span><span class="pt">${p.pts}</span></li>`).join('')}</ul>
+      ${hostBox}${err}
+      <button class="note-link" data-act="net-leave">${NET.leaveArmed ? 'Toque de novo para sair da sala' : 'Sair da sala'}</button></div></div>`;
+  }
+  stage.innerHTML = html;
+  if (ph === 'play') snetProgress();
+  const sc = $('.st-center', stage); if (sc && keep) sc.scrollTop = keep;
+}
+async function snetStart(){
+  const st = NET.st; if (!st || st.host !== NET.pid || NET.busy) return;
+  const cfg = S.settings.stop; const cats = stopCats();
+  if (!cats.length) { NET.err = 'Escolha as categorias na tela do Stop antes de começar.'; netRender(true); return; }
+  const lvl = cfg.level === 'x' ? pick(LV) : cfg.level;
+  const pool = STOP_LETTERS[lvl].split(''); let avail = pool.filter(c => !S.usedLetters.has(c));
+  if (!avail.length) { pool.forEach(c => S.usedLetters.delete(c)); avail = pool.slice(); }
+  const letter = pick(avail); S.usedLetters.add(letter);
+  NET.busy = true; netRender(true);
+  try { await netApi({action:'sstart', code:NET.code, pid:NET.pid, letter, cats, lvl, limit:cfg.time}); NET.err = ''; }
+  catch (e) { NET.err = NET_ERR[e.code] || NET_ERR.net; }
+  NET.busy = false; netLoop();
+}
+async function snetStop(){
+  const r = NET.st && NET.st.round;
+  if (!r || snetPhase() !== 'play' || NET.busy || !snetAllFilled()) return;
+  NET.busy = true; snetProgress(); clearTimeout(NET.saveT);
+  try { await netApi({action:'sstop', code:NET.code, pid:NET.pid, n:r.n, answers:NET.draft}); NET.err = ''; }
+  catch (e) { NET.err = NET_ERR[e.code] || NET_ERR.net; }
+  NET.busy = false; snetProgress(); netLoop();
+}
+async function snetVote(author, v){
+  const st = NET.st; const r = st && st.round; if (!r || r.phase !== 'review' || !author) return;
+  st.votes = Object.assign({}, st.votes, {[`${NET.pid}|${author}|${r.reviewIdx}`]: v === '0' ? '0' : '1'});
+  netRender(true);
+  try { await netApi({action:'svote', code:NET.code, pid:NET.pid, n:r.n, author, idx:r.reviewIdx, valid:v !== '0'}); }
+  catch (e) { NET.err = NET_ERR[e.code] || NET_ERR.net; }
+  netLoop();
+}
+async function snetNext(){
+  const r = NET.st && NET.st.round; if (!r || NET.busy) return;
+  NET.busy = true; netRender(true);
+  try { await netApi({action:'snext', code:NET.code, pid:NET.pid, n:r.n}); NET.err = ''; }
+  catch (e) { NET.err = NET_ERR[e.code] || NET_ERR.net; }
+  NET.busy = false; netLoop();
+}
+
 /* ================= Eventos ================= */
 function startCurrent(){
   const kind = MODES[S.mode].kind;
-  if (kind === 'cards') { if (S.mode === 'qse' && S.settings.qse.way === 'group') netCreate(); else startCards(S.mode); } else if (kind === 'impostor') startImpostor(); else if (kind === 'medida') startMedida(); else startStop();
+  if (kind === 'cards') { if (S.mode === 'qse' && S.settings.qse.way === 'group') netCreate('qse'); else startCards(S.mode); }
+  else if (kind === 'impostor') startImpostor(); else if (kind === 'medida') startMedida();
+  else if (S.settings.stop.way === 'online') netCreate('stop'); else startStop();
 }
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-act]'); if (!t || t.disabled) return;
@@ -1460,6 +1679,12 @@ document.addEventListener('click', e => {
     case 'net-end': netEnd(); break;
     case 'net-undo': netUndo(); break;
     case 'net-leave': netLeave(); break;
+    case 'snet-start': snetStart(); break;
+    case 'snet-stop': snetStop(); break;
+    case 'snet-vote': snetVote(t.dataset.id, v); break;
+    case 'snet-next': snetNext(); break;
+    case 'snet-lvl': S.settings.stop.level = v; save(); netRender(true); break;
+    case 'snet-time': S.settings.stop.time = Number(v); save(); netRender(true); break;
     case 'again': { const c = S.settings[S.mode]; const nx = nextPlayer(c.player); if (nx) c.player = nx.id; save(); startCards(S.mode); break; }
     case 'pts': { const p = playerById(t.dataset.id); if (p) { p.pts += Number(t.dataset.d); save(); refreshPlacar(); if (A && A.phase === 'over') renderStop(); } break; }
     case 'del-player': S.players = S.players.filter(p => p.id !== t.dataset.id); save(); refreshPlacar(); break;
@@ -1497,6 +1722,11 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('input', e => {
   const el = e.target;
+  if (el.classList && el.classList.contains('snet-in')) {
+    NET.draft = NET.draft || {}; NET.draft[el.dataset.i] = el.value.slice(0, 40);
+    snetProgress(); clearTimeout(NET.saveT); NET.saveT = setTimeout(snetFlush, 700);
+    return;
+  }
   if (el.id === 'me-name') { S.me.name = el.value.slice(0, 24); saveSoon(); return; }
   if (el.id === 'join-code') { const c = el.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4); if (c !== el.value) el.value = c; return; }
   if (el.id === 'med-guess' && M) { M.guess = Number(el.value); return; }
@@ -1519,6 +1749,7 @@ document.addEventListener('change', e => {
   if (el.matches && el.matches('select[data-plvl]')) { const p = playerById(el.dataset.plvl); if (p && LV_ALL.includes(el.value)) { p.lvl = el.value; save(); } }
 });
 document.addEventListener('submit', e => {
+  if (e.target.id === 'snet-form') { e.preventDefault(); return; }
   if (e.target.id !== 'addp') return;
   e.preventDefault();
   const inp = $('#pname'); const name = inp.value.trim().slice(0, 24); if (!name) return;
@@ -1527,6 +1758,11 @@ document.addEventListener('submit', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target && e.target.id === 'join-code') { e.preventDefault(); netJoin(); return; }
+  if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('snet-in')) {
+    e.preventDefault(); const nx = $(`#snet-${Number(e.target.dataset.i) + 1}`, stage);
+    if (nx) nx.focus(); else e.target.blur();
+    return;
+  }
   if (stage.hidden || !R) return;
   if (e.key === 'Escape') { e.preventDefault(); if (R.phase === 'pause') resume(); else pause(); return; }
   if (R.phase !== 'play') return;
@@ -1545,7 +1781,7 @@ renderHome();
 netProbe().then(() => {
   if (NET.avail !== true) return;
   let s = null; try { s = JSON.parse(sessionStorage.getItem('resenha-sala') || 'null'); } catch (e) {}
-  if (s && s.code && s.pid) netEnter(s.code, s.pid);
+  if (s && s.code && s.pid) netEnter(s.code, s.pid, s.game);
 });
 })();
 </script>

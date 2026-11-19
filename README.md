@@ -24,6 +24,8 @@ A sala usa a função `api/room.js` e um banco Redis gratuito da Upstash:
 2. Conecte o banco ao projeto, com o prefixo padrão. O Vercel cria as variáveis `KV_REST_API_URL` e `KV_REST_API_TOKEN`.
 3. Faça um novo deploy para a função enxergar as variáveis. Um push com qualquer mudança na `main` já serve.
 
+O **Stop** também tem modo online: todo mundo digita as respostas no próprio celular, o Stop só libera com tudo preenchido e, depois, a roda vota categoria por categoria nas respostas que não valem. Resposta em branco ou que não começa com a letra é anulada sozinha, e a resposta cai se mais da metade dos outros votar contra. Vale 10 se só você escreveu, 5 se alguém repetiu (sem contar acento nem maiúscula), vezes o nível da rodada.
+
 As salas somem sozinhas depois de 6 horas sem uso.
 
 ## Instalar como app no celular
