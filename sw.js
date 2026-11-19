@@ -1,5 +1,5 @@
 ﻿/* Guarda o app no aparelho para funcionar sem internet.
-   Ao mudar qualquer arquivo, aumente o nÃºmero da versÃ£o abaixo. */
+   Ao mudar qualquer arquivo, aumente o número da versão abaixo. */
 const CACHE = 'resenha-v3';
 const FONTS = 'resenha-fontes';
 const ASSETS = [
@@ -33,7 +33,7 @@ self.addEventListener('fetch', (e) => {
   if (url.origin === self.location.origin) {
     /* a sala online sempre vai direto para a rede */
     if (url.pathname.startsWith('/api/')) return;
-    /* a pÃ¡gina vem da rede quando tem internet, para as atualizaÃ§Ãµes chegarem; sem internet, vem do aparelho */
+    /* a página vem da rede quando tem internet, para as atualizações chegarem; sem internet, vem do aparelho */
     if (req.mode === 'navigate') {
       e.respondWith(
         fetch(req)
@@ -50,7 +50,7 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  /* fontes do Google: usa a cÃ³pia guardada e atualiza em segundo plano */
+  /* fontes do Google: usa a cópia guardada e atualiza em segundo plano */
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
     e.respondWith(
       caches.open(FONTS).then(async (c) => {
