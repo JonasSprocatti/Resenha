@@ -151,6 +151,9 @@ h1{font-family:var(--f-display);font-weight:800;line-height:.98;letter-spacing:-
 .chip{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:15px;line-height:1;padding:10px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer}
 .chip small{font-size:12px;font-weight:500;opacity:.6;font-variant-numeric:tabular-nums}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip{color:var(--ink)}
+.stage .chip{background:var(--note-veil);color:var(--note-ink);border-color:var(--note-shade)}
+.stage .chip[aria-pressed="true"]{background:var(--note-ink);color:var(--c,var(--yellow));border-color:var(--note-ink)}
 .chip:disabled{opacity:.4;cursor:not-allowed}
 .adult{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.04em;background:var(--bad);color:var(--on-strong);border-radius:4px;padding:3px 4px}
 textarea{width:100%;min-height:110px;resize:vertical;font:500 16px/1.45 var(--f-body);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;box-sizing:border-box}
@@ -1147,7 +1150,7 @@ const NET_ERR = {
 };
 const netNow = () => Date.now() + NET.offset;
 function netSaveSession(){
-  const s = {code:NET.code, pid:NET.pid};
+  const s = {code:NET.code, pid:NET.pid, name:(S.me.name || '').trim()};
   try { sessionStorage.setItem('resenha-sala', JSON.stringify(s)); } catch (e) {}
   try { localStorage.setItem('resenha-sala', JSON.stringify(s)); } catch (e) {}
   NET.last = s;
@@ -1298,7 +1301,7 @@ function netRender(force){
     <p class="ov-kicker">Código da sala</p><p class="net-code">${code}</p>
     <p class="ov-sub">Cada pessoa abre <b>${esc(location.host)}</b>, escolhe Quem Sou Eu? → Todos juntos e digita este código.</p>
     <p class="ov-kicker">Placar da sala</p>
-    <ul class="net-list">${ranked.map((p, i) => `<li${p.pid === NET.pid ? ' class="me"' : ''}><span class="pos">${r ? `${i + 1}º` : '·'}</span><span class="nm">${esc(p.name)}${p.pid === st.host ? '<span class="net-tag">sala</span>' : ''}${p.pid === NET.pid ? '<span class="net-tag">você</span>' : ''}<small>${LV_NAME[p.lvl]} ×${LV_MULT[p.lvl]}</small></span><span class="pt">${p.pts}</span></li>`).join('')}</ul>
+    <ul class="net-list">${ranked.map((p, i) => `<li${p.pid === NET.pid ? ' class="me"' : ''}><span class="pos">${r ? `${i + 1}º` : '·'}</span><span class="nm">${esc(p.name)}${p.pid === st.host ? '<span class="net-tag">admin</span>' : ''}${p.pid === NET.pid ? '<span class="net-tag">você</span>' : ''}<small>${LV_NAME[p.lvl]} ×${LV_MULT[p.lvl]}</small></span><span class="pt">${p.pts}</span></li>`).join('')}</ul>
     <p class="ov-kicker">Seu nível</p><div class="chips">${LV.map(x => chip('me-lvl', x, `${LV_NAME[x]} <small>×${LV_MULT[x]}</small>`, me && me.lvl === x)).join('')}</div>
     ${isHost
       ? `<button class="cta" data-act="net-start"${st.players.length < 2 || NET.busy ? ' disabled' : ''}>${r ? 'Próxima rodada' : 'Começar a rodada'}</button>${st.players.length < 2 ? '<p class="net-small">Esperando mais alguém entrar com o código.</p>' : ''}`
@@ -1317,7 +1320,8 @@ async function netCreate(){
 async function netJoinCode(code){
   const name = netName(); if (!name) return;
   if (!/^[A-Z]{4}$/.test(code)) { showErr('Digite o código de 4 letras da sala.'); return; }
-  const prior = NET.last && NET.last.code === code ? NET.last.pid : '';
+  /* só volta como o mesmo jogador se for a mesma sala e o mesmo nome; outra pessoa no mesmo aparelho entra como nova */
+  const prior = NET.last && NET.last.code === code && (NET.last.name || '').toLowerCase() === name.toLowerCase() ? NET.last.pid : '';
   try { const j = await netApi({action:'join', code, pid:prior, name, lvl:S.me.lvl}); netEnter(j.code, j.pid); }
   catch (e) { showErr(NET_ERR[e.code] || NET_ERR.net); }
 }
