@@ -22,7 +22,7 @@ A sala usa a função `api/room.js` e um banco Redis gratuito da Upstash:
 
 1. No projeto no Vercel, abra **Storage → Create Database → Upstash for Redis** e escolha o plano Free.
 2. Conecte o banco ao projeto, com o prefixo padrão. O Vercel cria as variáveis `KV_REST_API_URL` e `KV_REST_API_TOKEN`.
-3. Faça um novo deploy para a função enxergar as variáveis.
+3. Faça um novo deploy para a função enxergar as variáveis. Um push com qualquer mudança na `main` já serve.
 
 As salas somem sozinhas depois de 6 horas sem uso.
 
