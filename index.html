@@ -341,6 +341,10 @@ textarea{width:100%;min-height:110px;resize:vertical;font:500 16px/1.45 var(--f-
 .snet-vote button{min-width:48px;height:44px;border-radius:10px;border:2px solid var(--note-ink);background:transparent;color:var(--note-ink);font-size:20px;font-weight:800;cursor:pointer}
 .snet-vote .yes[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--on-strong)}
 .snet-vote .no[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:var(--on-strong)}
+.addcat{display:flex;gap:8px;width:min(560px,100%)}
+.addcat .text-in{flex:1;min-width:0}
+.stage .stepper{justify-self:center}
+.snet-time-out{min-width:7ch!important}
 .snet-det{width:min(560px,100%);text-align:left;background:var(--note-veil);border-radius:12px;padding:10px 14px}
 .snet-det summary{font-weight:800;cursor:pointer}
 .snet-det p{margin:8px 0 0;font-size:14px;line-height:1.4}
@@ -1519,7 +1523,7 @@ function snetRender(force){
   if (!NET.code) return;
   const st = NET.st; const ph = snetPhase(); const r = st && st.round;
   const grace = ph === 'review' && netNow() < (r.stopAt || 0) + 3000;
-  const sig = ph === 'play' ? JSON.stringify(['play', r.n]) : JSON.stringify([ph, grace, NET.err, NET.leaveArmed, NET.busy, st && st.host, r && [r.n, r.phase, r.reviewIdx], st && st.players.map(p => [p.pid, p.name, p.pts]), ph === 'review' ? r.players.map(id => [((st.answers || {})[id] || {})[r.reviewIdx] || '', r.players.map(v => (st.votes || {})[`${v}|${id}|${r.reviewIdx}`] || '')]) : null, ph === 'lobby' ? [S.settings.stop.level, S.settings.stop.time] : null]);
+  const sig = ph === 'play' ? JSON.stringify(['play', r.n]) : JSON.stringify([ph, grace, NET.err, NET.leaveArmed, NET.busy, st && st.host, r && [r.n, r.phase, r.reviewIdx], st && st.players.map(p => [p.pid, p.name, p.pts]), ph === 'review' ? r.players.map(id => [((st.answers || {})[id] || {})[r.reviewIdx] || '', r.players.map(v => (st.votes || {})[`${v}|${id}|${r.reviewIdx}`] || '')]) : null, ph === 'lobby' ? [S.settings.stop.level, S.settings.stop.time, stopCats().join('|')] : null]);
   if (!force && sig === NET.sig) { if (ph === 'play') snetProgress(); return; }
   NET.sig = sig;
   const view = ph + ':' + (r ? r.n + ':' + r.reviewIdx : '');
@@ -1576,12 +1580,16 @@ function snetRender(force){
       <details class="snet-det"><summary>Ver as respostas</summary>${r.cats.map((c, i) => `<p><b>${esc(c)}:</b> ${ids.map(id => { const x = r.results[id].per[i] || {}; return `${esc(nameOf(id))}: ${x.t ? (x.ok ? esc(x.t) : `<s>${esc(x.t)}</s>`) : '—'} (${x.pts || 0})`; }).join(' · ')}</p>`).join('')}</details>`;
     }
     const ranked = st.players.slice().sort((a, b) => b.pts - a.pts || a.t - b.t);
-    const cfg = S.settings.stop; const cats = stopCats();
+    const cfg = S.settings.stop; const cats = stopCats(); const mine = lines('stop').slice(0, 12);
     const hostBox = isHost
-      ? `<p class="ov-kicker">${r ? 'Próxima rodada' : 'Regras da rodada'}</p>
+      ? `<p class="ov-kicker">${r ? 'Próxima rodada' : 'Regras da rodada'} · você é admin</p>
         <div class="chips">${LV_ALL.map(x => chip('snet-lvl', x, `${LV_NAME[x]} <small>${multLabel(x)}</small>`, cfg.level === x)).join('')}</div>
-        <div class="chips">${[0, 60, 90, 120, 180].map(t => chip('snet-time', String(t), t ? `${t} s` : 'Sem limite', cfg.time === t)).join('')}</div>
-        <p class="net-small">${plural(cats.length, 'categoria', 'categorias')}: ${esc(cats.join(', '))}.</p>
+        <p class="net-small">Tempo por letra</p>
+        <div class="stepper"><button type="button" data-act="snet-time" data-d="-30" aria-label="Menos 30 segundos">−</button><output class="snet-time-out">${cfg.time ? fmt(cfg.time * 1000) : 'Sem limite'}</output><button type="button" data-act="snet-time" data-d="30" aria-label="Mais 30 segundos">+</button></div>
+        <p class="net-small">${plural(cats.length, 'categoria', 'categorias')} (máximo 16). Toque para tirar.</p>
+        <div class="chips">${cfg.cats.map(k => `<button type="button" class="chip" data-act="snet-delcat" data-v="${k}" aria-pressed="true" aria-label="Tirar ${STOP_CATS[k].label}">${STOP_CATS[k].label} ✕</button>`).join('')}${mine.map((c, j) => `<button type="button" class="chip" data-act="snet-delcat" data-v="c:${j}" aria-pressed="true" aria-label="Tirar ${esc(c)}">${esc(c)} ✕</button>`).join('')}</div>
+        <div class="addcat"><label class="sr" for="snet-newcat">Nova categoria</label><input id="snet-newcat" class="text-in" maxlength="40" autocomplete="off" placeholder="Nova categoria, ex.: Apelido" value="${esc(NET.newCat || '')}"><button type="button" class="btn-ink" data-act="snet-addtext">Adicionar</button></div>
+        <div class="chips">${Object.keys(STOP_CATS).filter(k => !cfg.cats.includes(k)).map(k => `<button type="button" class="chip" data-act="snet-addcat" data-v="${k}" aria-pressed="false">+ ${STOP_CATS[k].label}${STOP_CATS[k].adult ? ' ' + adultTag : ''}</button>`).join('')}</div>
         <button class="cta" data-act="snet-start"${st.players.length < 2 || NET.busy ? ' disabled' : ''}>${r ? 'Próxima rodada' : 'Começar a rodada'}</button>${st.players.length < 2 ? '<p class="net-small">Esperando mais alguém entrar com o código.</p>' : ''}`
       : `<p class="ov-sub">Esperando ${esc(nameOf(st.host))} começar a ${r ? 'próxima ' : ''}rodada.</p>`;
     html = `${netTop('Stop online', true)}<div class="st-center scroll"><div class="st-inner">
@@ -1596,6 +1604,33 @@ function snetRender(force){
   stage.innerHTML = html;
   if (ph === 'play') snetProgress();
   const sc = $('.st-center', stage); if (sc && keep) sc.scrollTop = keep;
+}
+/* o admin monta as colunas da próxima rodada: categorias prontas ou escritas na hora */
+const catKey = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+function snetCatsChanged(msg){ NET.err = msg || ''; save(); const box = $('#chips-cats'); if (box && S.mode === 'stop') rerenderFields(); netRender(true); }
+function snetDelCat(v){
+  if (stopCats().length <= 1) { snetCatsChanged('Deixe pelo menos uma categoria.'); return; }
+  const cfg = S.settings.stop;
+  if (String(v).startsWith('c:')) { const j = Number(v.slice(2)); S.custom.stop = lines('stop').filter((_, k) => k !== j).join('\n'); }
+  else cfg.cats = cfg.cats.filter(k => k !== v);
+  snetCatsChanged();
+}
+function snetAddCat(k){
+  const cfg = S.settings.stop;
+  if (!STOP_CATS[k] || cfg.cats.includes(k)) return;
+  if (stopCats().length >= 16) { snetCatsChanged('O máximo é 16 categorias.'); return; }
+  cfg.cats.push(k); snetCatsChanged();
+}
+function snetAddText(){
+  const el = $('#snet-newcat', stage); const txt = ((el && el.value) || NET.newCat || '').trim().slice(0, 40);
+  if (!txt) return;
+  if (stopCats().length >= 16) { snetCatsChanged('O máximo é 16 categorias.'); return; }
+  NET.newCat = '';
+  const built = Object.keys(STOP_CATS).find(k => catKey(STOP_CATS[k].label) === catKey(txt));
+  if (built) { if (!S.settings.stop.cats.includes(built)) S.settings.stop.cats.push(built); snetCatsChanged(); return; }
+  if (lines('stop').some(c => catKey(c) === catKey(txt))) { snetCatsChanged('Essa categoria já está na lista.'); return; }
+  S.custom.stop = lines('stop').concat(txt).join('\n'); snetCatsChanged();
+  const nx = $('#snet-newcat', stage); if (nx) nx.focus();
 }
 async function snetStart(){
   const st = NET.st; if (!st || st.host !== NET.pid || NET.busy) return;
@@ -1684,7 +1719,10 @@ document.addEventListener('click', e => {
     case 'snet-vote': snetVote(t.dataset.id, v); break;
     case 'snet-next': snetNext(); break;
     case 'snet-lvl': S.settings.stop.level = v; save(); netRender(true); break;
-    case 'snet-time': S.settings.stop.time = Number(v); save(); netRender(true); break;
+    case 'snet-time': S.settings.stop.time = Math.min(600, Math.max(0, (S.settings.stop.time || 0) + Number(t.dataset.d))); save(); netRender(true); break;
+    case 'snet-delcat': snetDelCat(v); break;
+    case 'snet-addcat': snetAddCat(v); break;
+    case 'snet-addtext': snetAddText(); break;
     case 'again': { const c = S.settings[S.mode]; const nx = nextPlayer(c.player); if (nx) c.player = nx.id; save(); startCards(S.mode); break; }
     case 'pts': { const p = playerById(t.dataset.id); if (p) { p.pts += Number(t.dataset.d); save(); refreshPlacar(); if (A && A.phase === 'over') renderStop(); } break; }
     case 'del-player': S.players = S.players.filter(p => p.id !== t.dataset.id); save(); refreshPlacar(); break;
@@ -1727,6 +1765,7 @@ document.addEventListener('input', e => {
     snetProgress(); clearTimeout(NET.saveT); NET.saveT = setTimeout(snetFlush, 700);
     return;
   }
+  if (el.id === 'snet-newcat') { NET.newCat = el.value.slice(0, 40); return; }
   if (el.id === 'me-name') { S.me.name = el.value.slice(0, 24); saveSoon(); return; }
   if (el.id === 'join-code') { const c = el.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4); if (c !== el.value) el.value = c; return; }
   if (el.id === 'med-guess' && M) { M.guess = Number(el.value); return; }
@@ -1758,6 +1797,7 @@ document.addEventListener('submit', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target && e.target.id === 'join-code') { e.preventDefault(); netJoin(); return; }
+  if (e.key === 'Enter' && e.target && e.target.id === 'snet-newcat') { e.preventDefault(); snetAddText(); return; }
   if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('snet-in')) {
     e.preventDefault(); const nx = $(`#snet-${Number(e.target.dataset.i) + 1}`, stage);
     if (nx) nx.focus(); else e.target.blur();
