@@ -180,6 +180,7 @@ textarea{width:100%;min-height:110px;resize:vertical;font:500 16px/1.45 var(--f-
 .wl.ok li{background:var(--ok-soft)}
 .wl.miss li{background:var(--surface);border:1px solid var(--line);color:var(--muted)}
 .wl em{font-style:normal;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-left:6px;color:var(--bad)}
+.wl em.lv{color:var(--muted)}
 .wl .none{background:none!important;border:0!important;padding-left:0;color:var(--muted);font-weight:500}
 .standings{margin-top:36px;max-width:460px}
 .standings ol{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:6px;counter-reset:r}
@@ -338,8 +339,12 @@ textarea{width:100%;min-height:110px;resize:vertical;font:500 16px/1.45 var(--f-
 
 /* ================= Níveis ================= */
 const LV = ['f','m','d','i'];
-const LV_NAME = {f:'Fácil', m:'Médio', d:'Difícil', i:'Impossível'};
+const LV_NAME = {f:'Fácil', m:'Médio', d:'Difícil', i:'Impossível', x:'Mista'};
 const LV_MULT = {f:1, m:2, d:3, i:5};
+/* Mista: cada carta vem de um nível sorteado e vale o multiplicador dele */
+const LV_ALL = ['f','m','d','i','x'];
+const multLabel = l => l === 'x' ? '×1 a ×5' : '×' + LV_MULT[l];
+const lvlsOf = l => l === 'x' ? LV : [l];
 const L = (f, m, d, i) => ({f, m, d, i});
 
 /* ================= Cartas ================= */
@@ -433,8 +438,38 @@ const DECKS = {
     ['Acordar de ressaca','Paquerar no bar','Dançar funk até o chão','Pedir a saideira','Virar uma dose de tequila'],
     ['Fugir do ex na festa','Abrir a porta de casa bêbado','Mandar áudio para o ex','Dançar na festa da firma','Cantar sofrência no karaokê'],
     ['Fazer o teste do bafômetro','Tentar beijar e levar um fora','Dividir a conta do bar','Esconder o celular do crush','Chorar no karaokê'],
-    ['Procurar Uber às 4 da manhã','Sair de fininho da festa','Ser barrado na balada','Postar story bêbado e apagar','Dormir no sofá do amigo'])}
+    ['Procurar Uber às 4 da manhã','Sair de fininho da festa','Ser barrado na balada','Postar story bêbado e apagar','Dormir no sofá do amigo'])},
+  musicas:{label:'Músicas', lv:L(
+    ['Garota de Ipanema','Aquarela','Evidências','Ai Se Eu Te Pego','Show das Poderosas','Envolver','Despacito','Macarena','Parabéns pra Você','Atirei o Pau no Gato','Ciranda Cirandinha','Asa Branca','País Tropical','Mas Que Nada','Tô Nem Aí','Ilariê','Thriller','Billie Jean','Bohemian Rhapsody','Imagine','Let It Go','Hakuna Matata','Shape of You','Bad Guy','Happy','Gangnam Style','Yesterday','Halo','Shake It Off','Asereje','Waka Waka','Chorando se Foi','Pais e Filhos','Sozinho','Trem-Bala'],
+    ['Faroeste Caboclo','Eduardo e Mônica','Tempo Perdido','Que País É Este','Primeiros Erros','Anna Júlia','Pelados em Santos','Vamos Fugir','Mulher de Fases','Ainda Bem','Infiel','Fico Assim Sem Você','Cheia de Manias','Velha Infância','Exagerado','Lanterna dos Afogados','Chão de Giz','Deixa a Vida Me Levar','Ovelha Negra','Mania de Você','Sina','Garota Nacional','Meu Erro','Pense em Mim','É o Amor','Fio de Cabelo','Ai Que Saudade D’ocê','Cuida Bem Dela','Rolling in the Deep','Someone Like You','Uptown Funk','Blinding Lights','Smells Like Teen Spirit','Sweet Child O’ Mine','Hotel California','Wonderwall','Livin’ on a Prayer','Dancing Queen','I Will Survive','Flowers'],
+    ['Construção','Cálice','O Bêbado e a Equilibrista','Águas de Março','Detalhes','Como Nossos Pais','Sampa','Oceano','Andar com Fé','Vapor Barato','Malandragem','Meu Mundo e Nada Mais','Bete Balanço','Pro Dia Nascer Feliz','Lança Perfume','Ando Meio Desligado','Panis et Circenses','Alegria, Alegria','Tropicália','Chega de Saudade','Carinhoso','Samba de uma Nota Só','Disparada','Stairway to Heaven','Hey Jude','Like a Rolling Stone','Purple Rain','Africa','Take On Me','Don’t Stop Me Now','Viva la Vida','Creep','Losing My Religion','Hallelujah','Space Oddity'],
+    ['Domingo no Parque','Sinal Fechado','Travessia','Clube da Esquina nº 2','Cais','Gita','Sangue Latino','Mistérios da Meia-Noite','O Trenzinho do Caipira','Bachianas Brasileiras nº 5','Odeon','Tico-Tico no Fubá','Paranoid Android','A Day in the Life','Riders on the Storm','Comfortably Numb','Strawberry Fields Forever','Clair de Lune','Für Elise','As Quatro Estações'])},
+  cantores:{label:'Cantores e bandas', lv:L(
+    ['Jorge e Mateus','Henrique e Juliano','Zezé Di Camargo e Luciano','Chitãozinho e Xororó','Maiara e Maraisa','Simone Mendes','Wesley Safadão','Alok','Léo Santana','Claudia Leitte','Daniela Mercury','Sandy e Junior','Thiaguinho','Matuê','Pedro Sampaio','Luísa Sonza','Iza','Legião Urbana','Mamonas Assassinas','Titãs','Skank','Charlie Brown Jr.','Capital Inicial','The Beatles','Queen','Coldplay','Bruno Mars','Ariana Grande','Katy Perry','Dua Lipa','Harry Styles','One Direction','Eminem','BTS','Metallica'],
+    ['Os Paralamas do Sucesso','Barão Vermelho','Engenheiros do Hawaii','Kid Abelha','Ira!','Ultraje a Rigor','RPM','Jota Quest','O Rappa','Raimundos','CPM 22','NX Zero','Fresno','Pitty','Restart','Banda Calypso','Banda Eva','Chiclete com Banana','Exaltasamba','Revelação','Sorriso Maroto','Fundo de Quintal','Turma do Pagode','Racionais MC’s','Emicida','Criolo','Djonga','Marisa Monte','Seu Jorge','Ana Castela','Guns N’ Roses','Nirvana','AC/DC','Linkin Park','Red Hot Chili Peppers','ABBA','Bon Jovi','Maroon 5','The Weeknd','Lana Del Rey'],
+    ['Secos & Molhados','Novos Baianos','Tribalistas','Nação Zumbi','Chico Science','Los Hermanos','Cachorro Grande','Planet Hemp','Sepultura','Angra','Natiruts','Cidade Negra','Biquini Cavadão','Blitz','Rouge','Br’oz','KLB','Molejo','Só Pra Contrariar','Clara Nunes','Beth Carvalho','Alcione','Jorge Ben Jor','Gonzaguinha','Luiz Gonzaga','Belchior','Fagner','Pink Floyd','Led Zeppelin','The Rolling Stones','Radiohead','Arctic Monkeys','Daft Punk','Fleetwood Mac','The Doors'],
+    ['Itamar Assumpção','Tom Zé','Jards Macalé','Arrigo Barnabé','Elomar','Cartola','Noel Rosa','Pixinguinha','Nelson Cavaquinho','Clementina de Jesus','Ave Sangria','Som Imaginário','Egberto Gismonti','Kraftwerk','Can','The Velvet Underground','Sonic Youth','Joy Division','Cocteau Twins','My Bloody Valentine'])},
+  /* Números: você é o número e descobre qual com perguntas como "sou maior que 50?" */
+  numeros:{label:'Números', lv:L(
+    ['0','1','2','3','4','5','6','7','8','9','10','12','15','20','50','100'],
+    Array.from({length:50}, (_, i) => String(i + 11)).filter(n => !['12','15','20','50'].includes(n)),
+    ['61','64','72','77','81','88','99','101','111','123','128','144','150','199','222','250','256','300','333','365','404','500','512','666','777','800','999','1.000','1.500','2.000'],
+    ['−1','−7','−42','−100','0,5','1/2','1/3','3/4','2,5','7,5','0,1','0,001','3,14','π (pi)','√2','1.024','1984','2026','10.000','50.000','100.000','12.345','1.000.000','1 bilhão','∞ (infinito)'])}
 };
+/* mais filmes e séries, por nível */
+const MAIS = {
+  filmes:L(
+    ['Jumanji','Os Caça-Fantasmas','Karatê Kid','Sonic: O Filme','Super Mario Bros.: O Filme','Mogli: O Menino Lobo','Dumbo','Bambi','101 Dálmatas','Lilo & Stitch','Valente','Hotel Transilvânia','Como Treinar o Seu Dragão','Rio','O Gato de Botas','Os Croods','Pets: A Vida Secreta dos Bichos','Sing: Quem Canta Seus Males Espanta','Detona Ralph','Operação Big Hero','Alvin e os Esquilos','Homem-Formiga','Doutor Estranho','Guardiões da Galáxia','Capitã Marvel','Deadpool','Venom','Transformers','Godzilla','King Kong'],
+    ['Gente Grande','Click','As Branquelas','Todo Mundo em Pânico','Se Beber, Não Case!','Meninas Malvadas','O Diabo Veste Prada','Diário de uma Paixão','A Culpa é das Estrelas','Mamma Mia!','Grease: Nos Tempos da Brilhantina','Dirty Dancing','Ghost: Do Outro Lado da Vida','Uma Linda Mulher','Top Gun','Duro de Matar','Jogos Mortais','Invocação do Mal','It: A Coisa','O Exorcista','Pânico','Sexta-Feira 13','A Hora do Pesadelo','O Chamado','Tropa de Elite 2','Cine Holliúdy','Os Penetras','Até que a Sorte nos Separe','De Pernas pro Ar','O Menino Maluquinho','Xuxa e os Duendes','Os Saltimbancos Trapalhões','Turma da Mônica: Laços','2 Filhos de Francisco','Meu Nome Não é Johnny'],
+    ['Seven: Os Sete Crimes Capitais','Os Suspeitos','O Sexto Sentido','Os Infiltrados','Bastardos Inglórios','Django Livre','O Lobo de Wall Street','A Rede Social','Ela','Brilho Eterno de uma Mente sem Lembranças','Clube dos Cinco','Curtindo a Vida Adoidado','Os Goonies','Gremlins','Os Caçadores da Arca Perdida','O Labirinto do Fauno','Drive','Ilha do Medo','Cisne Negro','Gravidade','Náufrago','O Show de Truman','Uma Mente Brilhante','O Resgate do Soldado Ryan','A Lista de Schindler','O Pianista','Coração Valente','Amnésia','Trainspotting','O Grande Hotel Budapeste'],
+    ['Um Corpo que Cai','Janela Indiscreta','Quanto Mais Quente Melhor','Crepúsculo dos Deuses','Lawrence da Arábia','Ladrões de Bicicleta','A Doce Vida','Acossado','Os Incompreendidos','Tempos Modernos','O Gabinete do Dr. Caligari','Viagem à Lua','O Bandido da Luz Vermelha','Pixote','Eles Não Usam Black-Tie','Cabra Marcado para Morrer','Dona Flor e Seus Dois Maridos','Rio, 40 Graus','O Cangaceiro','Assalto ao Trem Pagador']),
+  series:L(
+    ['Chiquititas','Rebelde','Floribella','Hannah Montana','iCarly','Os Feiticeiros de Waverly Place','Kim Possible','Ben 10','Três Espiãs Demais','Phineas e Ferb','Apenas um Show','O Incrível Mundo de Gumball','Os Padrinhos Mágicos','Rugrats','Doug','Tom e Jerry','Zorra Total','Domingão do Faustão','Caldeirão do Huck','Fantástico','Jornal Nacional','Mais Você','A Fazenda','Casos de Família','Programa do Ratinho','Teletubbies','Barney','O Show da Luna','Mundo Bita','Detetives do Prédio Azul'],
+    ['Emily em Paris','Outer Banks','Cobra Kai','Ginny & Georgia','Heartstopper','Lupin','Elite','Vis a Vis','Bom Dia, Verônica','DNA do Crime','Coisa Mais Linda','Irmandade','3%','Anne with an E','Riverdale','The Vampire Diaries','Smallville','Supernatural','Sex and the City','Desperate Housewives','Lúcifer','Suits','The Mandalorian','Loki','WandaVision','House of the Dragon','Os Anéis de Poder','The Umbrella Academy','You','13 Reasons Why','Alice in Borderland','Avatar: A Lenda de Aang','Gravity Falls','BoJack Horseman','Shameless'],
+    ['The Leftovers','Westworld','Mr. Robot','Halt and Catch Fire','Boardwalk Empire','Oz','Deadwood','A Sete Palmos','Hannibal','Sherlock','The IT Crowd','Community','Parks and Recreation','30 Rock','Scrubs','Plantão Médico','Dawson’s Creek','Gilmore Girls','The O.C.','One Tree Hill','Heroes','Fringe','Battlestar Galactica','The Expanse','Senna','O Mecanismo','Os Outros','Justiça','Amor de Mãe','Pedaço de Mim'],
+    ['Carga Pesada','A Diarista','Os Aspones','Brava Gente','Hilda Furacão','Anos Dourados','Anos Rebeldes','O Bem-Amado','Roque Santeiro','Vamp','Que Rei Sou Eu?','Tieta','Mulheres de Areia','Bonanza','Jeannie é um Gênio','A Feiticeira','Agente 86','TV Colosso','Glub Glub','O Mundo de Beakman'])
+};
+Object.keys(MAIS).forEach(k => LV.forEach(l => { DECKS[k].lv[l] = DECKS[k].lv[l].concat(MAIS[k][l].filter(w => !DECKS[k].lv[l].includes(w))); }));
 
 const PROIBIDA = L(
   [['Praia','areia','mar','sol','onda'],['Futebol','bola','gol','time','jogador'],['Celular','telefone','ligar','tela','aplicativo'],['Café','bebida','xícara','manhã','preto'],['Natal','dezembro','Papai Noel','presente','árvore'],['Pizza','queijo','massa','fatia','italiana'],['Cachorro','latir','animal','osso','gato'],['Chuva','água','nuvem','guarda-chuva','molhar'],['Escola','aula','professor','aluno','estudar'],['Aniversário','bolo','festa','parabéns','idade'],['Cinema','filme','pipoca','tela','ingresso'],['Sorvete','gelado','casquinha','sabor','derreter'],['Cama','dormir','quarto','travesseiro','lençol'],['Banho','água','chuveiro','sabonete','toalha'],['Dinheiro','real','nota','moeda','pagar'],['Pipoca','milho','cinema','estourar','manteiga'],['Ovo','galinha','gema','clara','fritar'],['Bicicleta','pedalar','roda','andar','guidão'],['Sol','quente','dia','estrela','luz'],['Bolo','aniversário','vela','fatia','forno'],['Geladeira','frio','cozinha','gelo','comida'],['Avião','voar','aeroporto','piloto','viagem'],['Música','cantar','som','ouvir','banda'],['Sapato','pé','calçar','salto','tênis'],['Livro','ler','página','história','biblioteca']],
@@ -472,13 +507,13 @@ const BANDS = {f:[6,13,20], m:[4,10,16], d:[3,7,12], i:[2,4,7]};
 const STOP_CATS = {
   nome:{label:'Nome'}, cep:{label:'Cidade, estado ou país'}, animal:{label:'Animal'}, fruta:{label:'Fruta, legume ou verdura'},
   cor:{label:'Cor'}, objeto:{label:'Objeto'}, comida:{label:'Comida'}, profissao:{label:'Profissão'}, marca:{label:'Marca'},
-  filme:{label:'Filme ou série'}, corpo:{label:'Parte do corpo'}, famoso:{label:'Famoso'}, musica:{label:'Cantor ou banda'},
+  filme:{label:'Filme ou série'}, corpo:{label:'Parte do corpo'}, famoso:{label:'Famoso'}, musica:{label:'Cantor ou banda'}, cancao:{label:'Música (nome da canção)'},
   verbo:{label:'Verbo'}, sogra:{label:'Minha sogra é…'}, praia:{label:'Coisa de levar à praia'}, time:{label:'Time de futebol'},
   anime:{label:'Anime'}, jogo:{label:'Jogo'}, desculpa:{label:'Desculpa para não sair de casa'},
   bebado:{label:'Coisa que se faz bêbado', adult:true}, bebida:{label:'Bebida', adult:true}
 };
 const STOP_LETTERS = {f:'ABCDEFGLMNPRST', m:'ABCDEFGHIJLMNOPRSTUV', d:'ABCDEFGHIJLMNOPQRSTUVXZ', i:'ABCDEFGHIJKLMNOPQRSTUVWXYZ'};
-const STOP_NOTE = {f:'Só letras fáceis, como A, B, C, M, P e S', m:'Ficam de fora K, Q, W, X, Y e Z', d:'Entram Q, X e Z; só K, W e Y ficam de fora', i:'Vale o alfabeto inteiro, até K, W e Y'};
+const STOP_NOTE = {f:'Só letras fáceis, como A, B, C, M, P e S', m:'Ficam de fora K, Q, W, X, Y e Z', d:'Entram Q, X e Z; só K, W e Y ficam de fora', i:'Vale o alfabeto inteiro, até K, W e Y', x:'Cada letra sorteia um nível, que muda as letras possíveis e o multiplicador'};
 
 /* ================= Jogos ================= */
 const MODES = {
@@ -486,12 +521,12 @@ const MODES = {
     blurb:'Você não vê a carta, os amigos veem. Faça perguntas de sim ou não e descubra quem ou o que você é.',
     how:['Escolha quem vai adivinhar, o nível e as categorias. Depois toque em Começar.','Coloque o celular na testa com a tela virada para os amigos. Em pé funciona mesmo com a rotação travada.','Faça perguntas de sim ou não: “Eu sou uma pessoa?”, “Eu existo de verdade?”. Os amigos só respondem.','Acertou? Toque na metade de baixo da tela. Travou? Toque na metade de cima para passar.'],
     tip:'Sem limite de tempo, a rodada só acaba quando vocês tocarem em pausar e depois em encerrar.',
-    decks:['famosos','personagens','historia','animais','objetos','comidas','profissoes','filmes','series','animes','jogos','lugares','espaco','conceitos','festa18']},
+    decks:['famosos','personagens','historia','animais','objetos','comidas','profissoes','filmes','series','musicas','cantores','animes','jogos','lugares','espaco','conceitos','numeros','festa18']},
   mimica:{name:'Mímica', c:'pink', where:'Celular na mão', people:'4+ pessoas, em times', len:'1 min por vez', kind:'cards', perPlayer:true,
     blurb:'Só gestos, nada de falar. Seu time tem um minuto para adivinhar o máximo de cartas.',
     how:['Formem dois times. Quem faz a mímica segura o celular sem mostrar a tela.','Faça a mímica da carta sem falar, sem fazer sons e sem apontar coisas em volta.','O seu time grita palpites. Acertou, toque em Acertou; travou, toque em Pular.','Acabou o tempo, o celular passa para o outro time.'],
     tip:'Variação: troque a mímica por desenho num papel, sem letras nem números.',
-    decks:['acoes','animais','profissoes','filmes','series','animes','esportes','objetos','famosos','personagens','acoes18']},
+    decks:['acoes','animais','profissoes','filmes','series','musicas','cantores','animes','esportes','objetos','famosos','personagens','acoes18']},
   proibida:{name:'Palavra Proibida', c:'blue', where:'Celular na mão', people:'4+ pessoas, em times', len:'1 min por vez', kind:'cards', perPlayer:true,
     blurb:'Faça seu time dizer a palavra da carta sem usar nenhuma das quatro palavras proibidas.',
     how:['Formem dois times. Quem dá as dicas segura o celular; o time dele adivinha.','Explique a palavra de cima sem dizer nenhuma das quatro proibidas, nem pedaços delas.','Alguém do outro time vigia a tela. Escapou uma proibida? Toque em Proibida: tira pontos.','Nada de gestos, de soletrar ou de “rima com…”.']},
@@ -507,7 +542,7 @@ const MODES = {
     how:['Cada pessoa pega papel e caneta e escreve as categorias em colunas.','Toque em Sortear a letra. Todo mundo preenche cada categoria com uma palavra que comece com ela.','Quem terminar primeiro grita “Stop!” e toca no botão. Se tiver tempo marcado, o celular avisa quando acabar.','Leiam as respostas: 10 pontos se só você escreveu, 5 se alguém repetiu, 0 se ficou em branco.'],
     tip:'Combinem antes se apelido vale como nome e se marca conta como objeto.'}
 };
-const IMP_DECKS = ['lugares','comidas','animais','objetos','profissoes','esportes','filmes','series','animes','jogos','personagens','famosos','espaco','festa18'];
+const IMP_DECKS = ['lugares','comidas','animais','objetos','profissoes','esportes','filmes','series','musicas','cantores','animes','jogos','personagens','famosos','espaco','festa18'];
 const CUSTOM_UI = {
   qse:{title:'Suas palavras', ph:'Uma por linha. Nomes dos amigos, professores, piadas internas…', empty:'Elas viram a categoria “Minhas palavras” e entram em qualquer nível.'},
   mimica:{title:'Suas palavras', ph:'Uma por linha. Ex.: Imitar o professor de Química', empty:'Elas viram a categoria “Minhas palavras” e entram em qualquer nível.'},
@@ -555,19 +590,19 @@ const saved = load() || {};
 const S = {
   view:'home', mode:null,
   sound: saved.sound !== false,
-  players: Array.isArray(saved.players) ? saved.players.filter(p => p && typeof p.name === 'string' && p.name.trim()).slice(0, 20).map(p => ({id:String(p.id || uid()), name:p.name.trim().slice(0, 24), pts:Number(p.pts) || 0, lvl:LV.includes(p.lvl) ? p.lvl : 'f'})) : [],
+  players: Array.isArray(saved.players) ? saved.players.filter(p => p && typeof p.name === 'string' && p.name.trim()).slice(0, 20).map(p => ({id:String(p.id || uid()), name:p.name.trim().slice(0, 24), pts:Number(p.pts) || 0, lvl:LV_ALL.includes(p.lvl) ? p.lvl : 'f'})) : [],
   custom:{}, settings:{}, used:{}, usedLetters:new Set()
 };
 Object.keys(MODES).forEach(m => { const v = (saved.custom || {})[m]; S.custom[m] = typeof v === 'string' ? v : ''; });
 for (const k in DEFAULTS) {
   S.settings[k] = Object.assign(JSON.parse(JSON.stringify(DEFAULTS[k])), (saved.settings || {})[k] || {});
-  if (!LV.includes(S.settings[k].level)) S.settings[k].level = DEFAULTS[k].level;
+  if (!LV_ALL.includes(S.settings[k].level)) S.settings[k].level = DEFAULTS[k].level;
 }
 ['qse','mimica'].forEach(m => { const c = S.settings[m].cats; S.settings[m].cats = Array.isArray(c) ? c.filter(x => x === 'custom' || MODES[m].decks.includes(x)) : DEFAULTS[m].cats.slice(); });
 S.settings.stop.cats = Array.isArray(S.settings.stop.cats) ? S.settings.stop.cats.filter(k => STOP_CATS[k]) : DEFAULTS.stop.cats.slice();
 if (!['mix','custom'].includes(S.settings.impostor.cat) && !IMP_DECKS.includes(S.settings.impostor.cat)) S.settings.impostor.cat = 'mix';
 /* quem é você no modo Todos juntos (cada celular guarda o seu) */
-S.me = {name:typeof (saved.me || {}).name === 'string' ? saved.me.name.slice(0, 24) : '', lvl:LV.includes((saved.me || {}).lvl) ? saved.me.lvl : 'f'};
+S.me = {name:typeof (saved.me || {}).name === 'string' ? saved.me.name.slice(0, 24) : '', lvl:LV_ALL.includes((saved.me || {}).lvl) ? saved.me.lvl : 'f'};
 function save(){ try { localStorage.setItem(KEY, JSON.stringify({players:S.players, settings:S.settings, custom:S.custom, sound:S.sound, me:S.me})); } catch (e) {} }
 let saveT = null; function saveSoon(){ clearTimeout(saveT); saveT = setTimeout(save, 400); }
 const playerById = id => S.players.find(p => p.id === id) || null;
@@ -624,13 +659,13 @@ function renderHome(){
   S.view = 'home';
   app.innerHTML = `${topbar()}
   <section class="hero"><h1>Pega o celular, chama a galera.</h1>
-  <p class="lede">Seis jogos de festa que rodam num celular só: adivinhar com o celular na testa, mímica, palavra proibida, impostor, uma régua de opostos e o Stop. Cada pessoa escolhe o próprio nível, e quanto mais difícil, mais pontos.</p></section>
+  <p class="lede">Seis jogos de festa que rodam num celular só: adivinhar com o celular na testa, mímica, palavra proibida, impostor, uma régua de opostos e o Stop. Cada pessoa escolhe o próprio nível, e quanto mais difícil, mais pontos. Na Mista, cada carta sorteia o nível.</p></section>
   <section class="games" aria-label="Jogos">${Object.keys(MODES).map(k => { const m = MODES[k]; return `<button class="note" data-c="${m.c}" data-act="open" data-mode="${k}">
     <span class="note-where">${m.where}</span><span class="note-title">${m.name}</span><span class="note-text">${m.blurb}</span>
     <span class="note-meta"><span>${m.people}</span><span>${m.len}</span></span></button>`; }).join('')}</section>
   <div class="lower">
     <section id="placar" class="placar" aria-labelledby="placar-h">
-      <div><h2 class="sec-title" id="placar-h">Placar</h2><p class="sec-sub">Opcional. Adicione pessoas ou times e escolha o nível de cada um: Fácil vale ×1, Médio ×2, Difícil ×3 e Impossível ×5 nos pontos.</p></div>
+      <div><h2 class="sec-title" id="placar-h">Placar</h2><p class="sec-sub">Opcional. Adicione pessoas ou times e escolha o nível de cada um: Fácil vale ×1, Médio ×2, Difícil ×3 e Impossível ×5 nos pontos. Na Mista, cada carta vem de um nível sorteado e vale o multiplicador dele.</p></div>
       <form id="addp" class="addp" autocomplete="off"><label for="pname" class="sr">Nome da pessoa ou do time</label><input id="pname" maxlength="24" placeholder="Nome ou time"><button type="submit" class="btn-ink">Adicionar</button></form>
       <div id="plist">${plistHTML()}</div>
     </section>
@@ -646,7 +681,7 @@ function plistHTML(){
   const leaders = S.players.filter(p => p.pts === max).length;
   return `<ul class="plist">${S.players.map(p => `<li${max > 0 && p.pts === max && leaders === 1 ? ' class="lead"' : ''}>
     <div class="pn-wrap"><span class="pn">${esc(p.name)}</span><label class="sr" for="lvl-${p.id}">Nível de ${esc(p.name)}</label>
-      <select class="plvl" id="lvl-${p.id}" data-plvl="${p.id}">${LV.map(l => `<option value="${l}"${p.lvl === l ? ' selected' : ''}>${LV_NAME[l]} ×${LV_MULT[l]}</option>`).join('')}</select></div>
+      <select class="plvl" id="lvl-${p.id}" data-plvl="${p.id}">${LV_ALL.map(l => `<option value="${l}"${p.lvl === l ? ' selected' : ''}>${LV_NAME[l]} ${multLabel(l)}</option>`).join('')}</select></div>
     <span class="pp"><button data-act="pts" data-id="${p.id}" data-d="-1" aria-label="Tirar um ponto de ${esc(p.name)}">−</button><b>${p.pts}</b><button data-act="pts" data-id="${p.id}" data-d="1" aria-label="Dar um ponto para ${esc(p.name)}">+</button></span>
     <button class="pdel" data-act="del-player" data-id="${p.id}" aria-label="Remover ${esc(p.name)}">${ICON_X}</button></li>`).join('')}</ul>
     <button class="linkbtn" id="reset-pts" data-act="reset-pts">Zerar pontos</button>`;
@@ -673,8 +708,9 @@ function levelField(mode){
   const extra = mode === 'medida' ? ' As faixas de pontos da régua ficam mais estreitas a cada nível.'
     : mode === 'stop' ? ` ${STOP_NOTE[l]}.`
     : mode === 'impostor' ? ' A palavra secreta fica mais difícil a cada nível, para todo mundo.' : '';
-  return field(p ? `Nível de ${esc(p.name)}` : 'Nível', `<div class="chips">${LV.map(x => chip('lvl', x, `${LV_NAME[x]} <small>×${LV_MULT[x]}</small>`, l === x)).join('')}</div>
-    <p class="field-note">${p ? 'Fica salvo no placar. ' : ''}Pontos ×${LV_MULT[l]}.${extra}</p>`);
+  const pts = l === 'x' ? 'Cada carta vem de um nível sorteado e vale o multiplicador dele, de ×1 a ×5.' : `Pontos ×${LV_MULT[l]}.`;
+  return field(p ? `Nível de ${esc(p.name)}` : 'Nível', `<div class="chips">${LV_ALL.map(x => chip('lvl', x, `${LV_NAME[x]} <small>${multLabel(x)}</small>`, l === x)).join('')}</div>
+    <p class="field-note">${p ? 'Fica salvo no placar. ' : ''}${pts}${extra}</p>`);
 }
 function catChips(mode){
   const cfg = S.settings[mode];
@@ -685,15 +721,16 @@ function catChips(mode){
   }
   if (mode === 'stop') return Object.keys(STOP_CATS).map(k => chip('cat', k, `${STOP_CATS[k].label}${STOP_CATS[k].adult ? ' ' + adultTag : ''}`, cfg.cats.includes(k))).join('');
   const l = mode === 'qse' && S.settings.qse.way === 'group' ? S.me.lvl : roundLevel(mode);
-  let h = MODES[mode].decks.map(k => chip('cat', k, `${DECKS[k].label}${DECKS[k].adult ? ' ' + adultTag : ''} <small>${DECKS[k].lv[l].length}</small>`, cfg.cats.includes(k))).join('');
+  let h = MODES[mode].decks.map(k => chip('cat', k, `${DECKS[k].label}${DECKS[k].adult ? ' ' + adultTag : ''} <small>${lvlsOf(l).reduce((s, x) => s + DECKS[k].lv[x].length, 0)}</small>`, cfg.cats.includes(k))).join('');
   const n = lines(mode).length;
   if (n) h += chip('cat', 'custom', `Minhas palavras <small>${n}</small>`, cfg.cats.includes('custom'));
   return h;
 }
 function deckChips(mode){
   const cfg = S.settings[mode]; const l = roundLevel(mode);
-  const base = mode === 'proibida' ? PROIBIDA[l].length : ESCALAS.length;
-  const adult = mode === 'proibida' ? PROIBIDA18[l].length : ESCALAS18.length;
+  const sum = deck => lvlsOf(l).reduce((s, x) => s + deck[x].length, 0);
+  const base = mode === 'proibida' ? sum(PROIBIDA) : ESCALAS.length;
+  const adult = mode === 'proibida' ? sum(PROIBIDA18) : ESCALAS18.length;
   const n = customCount(mode);
   return chip('adult', '0', `Só cartas livres <small>${base}</small>`, !cfg.adult) + chip('adult', '1', `Incluir ${adultTag} <small>+${adult}</small>`, cfg.adult)
     + (n ? chip('mine', cfg.mine ? '0' : '1', `${mode === 'proibida' ? 'Minhas cartas' : 'Minhas escalas'} <small>${n}</small>`, cfg.mine) : '');
@@ -742,7 +779,7 @@ function settingsHTML(mode){
     h += customField(mode);
     h += field('Tempo por letra', `<div class="chips">${chip('time', '0', 'Sem limite, vale o Stop!', cfg.time === 0)}${[60, 90, 120, 180].map(t => chip('time', String(t), `${t} s`, cfg.time === t)).join('')}</div>`);
     h += field('Pontos', S.players.length
-      ? `<p class="field-note">No fim de cada letra dá para somar os pontos de cada um direto na tela, já multiplicados por ${LV_MULT[cfg.level]}.</p>`
+      ? `<p class="field-note">No fim de cada letra dá para somar os pontos de cada um direto na tela, já multiplicados ${cfg.level === 'x' ? 'pelo nível sorteado' : 'por ' + LV_MULT[cfg.level]}.</p>`
       : '<p class="field-note">Adicione nomes no <button class="inline-link" data-act="goto-placar">placar</button> para somar os pontos no fim de cada letra.</p>');
   }
   return h;
@@ -759,7 +796,7 @@ function netSetupHTML(){
   if (NET.avail === false) return h + '<p class="field-note">O Todos juntos precisa do site publicado e de internet. Abra o Resenha pelo endereço do site no Vercel para jogar assim.</p>';
   if (NET.avail === 'nodb') return h + `<p class="err">${NET_ERR.no_db}</p>`;
   h += field('Seu nome', `<label class="sr" for="me-name">Seu nome</label><input class="text-in" id="me-name" maxlength="24" autocomplete="nickname" placeholder="Como a roda te chama" value="${esc(S.me.name)}">`);
-  h += field('Seu nível', `<div class="chips">${LV.map(x => chip('me-lvl', x, `${LV_NAME[x]} <small>×${LV_MULT[x]}</small>`, S.me.lvl === x)).join('')}</div><p class="field-note">Suas cartas vêm deste nível e seus pontos valem ×${LV_MULT[S.me.lvl]}.</p>`);
+  h += field('Seu nível', `<div class="chips">${LV_ALL.map(x => chip('me-lvl', x, `${LV_NAME[x]} <small>${multLabel(x)}</small>`, S.me.lvl === x)).join('')}</div><p class="field-note">${S.me.lvl === 'x' ? 'Cada carta sua vem de um nível sorteado e vale o multiplicador dele, de ×1 a ×5.' : `Suas cartas vêm deste nível e seus pontos valem ×${LV_MULT[S.me.lvl]}.`}</p>`);
   h += field('Entrar numa sala', `<div class="join"><label class="sr" for="join-code">Código da sala</label><input id="join-code" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD"><button type="button" class="btn-ink" data-act="net-join">Entrar</button></div>${NET.last ? `<button class="linkbtn" data-act="net-rejoin">Voltar para a sala ${esc(NET.last.code)}</button>` : ''}`);
   h += field('Ou crie a sala: as cartas saem destas categorias', `<div class="chips" id="chips-cats">${catChips('qse')}</div>`);
   h += customField('qse');
@@ -794,12 +831,13 @@ function renderResults(){
   if (bad) parts.push(plural(bad, 'proibida', 'proibidas'));
   if (timeN) parts.push(`${timeN} sem tempo`);
   if (openN) parts.push(`${openN} em aberto`);
-  const math = `Nível ${LV_NAME[LAST.lvl]}: ${LAST.raw} × ${LAST.mult} = ${LAST.score}.`;
+  const mixed = LAST.lvl === 'x';
+  const math = mixed ? 'Dificuldade mista: cada carta valeu o multiplicador do nível dela.' : `Nível ${LV_NAME[LAST.lvl]}: ${LAST.raw} × ${LV_MULT[LAST.lvl]} = ${LAST.score}.`;
   app.innerHTML = `${topbar()}
   <button class="back" data-act="setup">← ${m.name}</button>
   <header class="res-head" data-c="${m.c}"><span class="tag">Fim da rodada${p ? ' · ' + esc(p.name) : ''} · ${LV_NAME[LAST.lvl]}</span><h1>${plural(LAST.score, 'ponto', 'pontos')}</h1><p>${parts.join(', ')}. ${math}${p ? ` Já está no placar de ${esc(p.name)}.` : ''}</p></header>
   <div class="res-grid">
-    <section><h2>Acertou <span>${ok.length}</span></h2><ul class="wl ok">${ok.length ? ok.map(r => `<li>${esc(r.w)}</li>`).join('') : '<li class="none">Nenhuma desta vez.</li>'}</ul></section>
+    <section><h2>Acertou <span>${ok.length}</span></h2><ul class="wl ok">${ok.length ? ok.map(r => `<li>${esc(r.w)}${mixed ? ` <em class="lv">${LV_NAME[r.lvl]}</em>` : ''}</li>`).join('') : '<li class="none">Nenhuma desta vez.</li>'}</ul></section>
     <section><h2>Passou <span>${miss.length}</span></h2><ul class="wl miss">${miss.length ? miss.map(r => `<li>${esc(r.w)}${tagFor(r)}</li>`).join('') : '<li class="none">Nenhuma. Rodada limpa.</li>'}</ul></section>
   </div>
   ${S.players.length ? standingsHTML(LAST.player) : ''}
@@ -819,13 +857,15 @@ stage.addEventListener('contextmenu', e => e.preventDefault());
 let R = null;
 function buildPool(mode, lvl){
   const map = new Map(); const cfg = S.settings[mode];
+  /* na Mista entram os quatro níveis; o que a roda escreveu vale como Fácil */
+  const lvls = lvlsOf(lvl); const own = lvl === 'x' ? 'f' : lvl;
   if (mode === 'proibida') {
-    PROIBIDA[lvl].concat(cfg.adult ? PROIBIDA18[lvl] : []).forEach(([w, ...f]) => map.set(w, {w, f, cat:'Explique sem dizer'}));
-    if (cfg.mine) customCards().forEach(c => { if (!map.has(c.w)) map.set(c.w, {w:c.w, f:c.f, cat:'Minha carta'}); });
+    lvls.forEach(l => PROIBIDA[l].concat(cfg.adult ? PROIBIDA18[l] : []).forEach(([w, ...f]) => { if (!map.has(w)) map.set(w, {w, f, cat:'Explique sem dizer', lvl:l}); }));
+    if (cfg.mine) customCards().forEach(c => { if (!map.has(c.w)) map.set(c.w, {w:c.w, f:c.f, cat:'Minha carta', lvl:own}); });
   } else {
     cfg.cats.forEach(k => {
-      if (k === 'custom') lines(mode).forEach(w => { if (!map.has(w)) map.set(w, {w, cat:'Minhas palavras'}); });
-      else if (DECKS[k]) DECKS[k].lv[lvl].forEach(w => { if (!map.has(w)) map.set(w, {w, cat:DECKS[k].label}); });
+      if (k === 'custom') lines(mode).forEach(w => { if (!map.has(w)) map.set(w, {w, cat:'Minhas palavras', lvl:own}); });
+      else if (DECKS[k]) lvls.forEach(l => DECKS[k].lv[l].forEach(w => { if (!map.has(w)) map.set(w, {w, cat:DECKS[k].label, lvl:l}); }));
     });
   }
   return [...map.values()];
@@ -856,7 +896,7 @@ function startCards(mode){
   audio();
   const cfg = S.settings[mode];
   const unlimited = mode === 'qse' && cfg.time === 0;
-  R = {mode, pool, lvl, mult:LV_MULT[lvl], deck:makeDeck(mode, pool), i:-1, card:null, answered:false, lock:false, results:[], score:0,
+  R = {mode, pool, lvl, pts:0, deck:makeDeck(mode, pool), i:-1, card:null, answered:false, lock:false, results:[], score:0,
     unlimited, left:cfg.time * 1000, base:0, t0:0, endAt:0, phase:'count', pausedFrom:null, player:cfg.player, timer:null, cd:null, lastTick:null};
   openStage(mode); stage.innerHTML = stageCardsHTML(mode); keepAwake();
   countdown(beginPlay);
@@ -882,7 +922,7 @@ function beginPlay(){
 function nextCard(){
   R.i++; if (R.i >= R.deck.length) { R.deck = makeDeck(R.mode, R.pool); R.i = 0; }
   R.card = R.deck[R.i]; R.answered = false; S.used[R.mode].add(R.card.w);
-  $('#st-cat', stage).textContent = `${R.card.cat} · ${LV_NAME[R.lvl]}`;
+  $('#st-cat', stage).textContent = `${R.card.cat} · ${LV_NAME[R.card.lvl]}`;
   $('#st-word', stage).textContent = R.card.w;
   const fl = $('#st-flist', stage); if (fl) fl.innerHTML = R.card.f.length ? R.card.f.map(x => `<li>${esc(x)}</li>`).join('') : '<li class="none">Nenhuma nesta carta</li>';
   fitWord();
@@ -908,9 +948,10 @@ function tick(){
 function answer(k){
   if (!R || R.phase !== 'play' || R.lock || !R.card || R.answered) return;
   R.answered = true; R.lock = true;
-  R.results.push({w:R.card.w, r:k});
-  if (k === 'ok') R.score++; else if (k === 'bad') R.score--;
-  $('#st-score', stage).textContent = scoreText(R.score * R.mult);
+  const m = LV_MULT[R.card.lvl] || 1;
+  R.results.push({w:R.card.w, r:k, lvl:R.card.lvl});
+  if (k === 'ok') { R.score++; R.pts += m; } else if (k === 'bad') { R.score--; R.pts -= m; }
+  $('#st-score', stage).textContent = scoreText(R.pts);
   SFX[k](); buzz(k === 'ok' ? 60 : k === 'bad' ? [80, 50, 80] : 30);
   const f = $('#flash', stage); f.dataset.k = k; f.textContent = k === 'ok' ? 'Acertou!' : k === 'bad' ? 'Proibida!' : 'Passou'; f.classList.add('show');
   setTimeout(() => { if (R && R.phase === 'play' && R.answered) nextCard(); }, 300);
@@ -926,7 +967,7 @@ function pause(){
   else return;
   R.phase = 'pause';
   const ov = $('#ov', stage); ov.className = 'ov';
-  ov.innerHTML = `<p class="ov-kicker">Pausado</p><p class="ov-big">${R.unlimited ? fmtUp(R.base) : fmt(R.left)}</p><p class="ov-sub">${scoreText(R.score * R.mult)} até agora.</p>
+  ov.innerHTML = `<p class="ov-kicker">Pausado</p><p class="ov-big">${R.unlimited ? fmtUp(R.base) : fmt(R.left)}</p><p class="ov-sub">${scoreText(R.pts)} até agora.</p>
   <div class="ov-btns"><button class="cta" data-act="resume">Continuar</button><button class="cta ghost" data-act="end">Encerrar e ver pontos</button></div>
   <button class="note-link" data-act="quit">Sair sem contar pontos</button>`;
   ov.hidden = false;
@@ -941,8 +982,8 @@ function endRound(manual){
   clearInterval(R.timer); clearTimeout(R.cd);
   R.phase = 'over';
   if (R.card && !R.answered) R.results.push({w:R.card.w, r:manual ? 'open' : 'time'});
-  const score = R.score * R.mult;
-  LAST = {mode:R.mode, results:R.results, raw:R.score, mult:R.mult, lvl:R.lvl, score, player:R.player};
+  const score = R.pts;
+  LAST = {mode:R.mode, results:R.results, raw:R.score, lvl:R.lvl, score, player:R.player};
   const p = playerById(R.player); if (p) { p.pts += score; save(); }
   if (manual) { finishRound(); return; }
   SFX.end(); buzz([200, 80, 200]);
@@ -966,15 +1007,15 @@ function startImpostor(){
   const named = S.players.length >= 3;
   const names = named ? S.players.map(p => p.name) : Array.from({length:cfg.n}, (_, i) => `Jogador ${i + 1}`);
   const n = names.length; const imps = cfg.imps === 2 && n >= 6 ? 2 : 1;
-  const lvl = cfg.level;
+  const own = cfg.level === 'x' ? 'f' : cfg.level;
   const pool = [];
-  if (cfg.cat === 'custom') lines('impostor').forEach(w => pool.push({w, cat:'Minhas palavras'}));
-  else (cfg.cat === 'mix' ? IMP_DECKS.filter(k => !DECKS[k].adult) : [cfg.cat]).forEach(k => DECKS[k].lv[lvl].forEach(w => pool.push({w, cat:DECKS[k].label})));
+  if (cfg.cat === 'custom') lines('impostor').forEach(w => pool.push({w, cat:'Minhas palavras', lvl:own}));
+  else (cfg.cat === 'mix' ? IMP_DECKS.filter(k => !DECKS[k].adult) : [cfg.cat]).forEach(k => lvlsOf(cfg.level).forEach(l => DECKS[k].lv[l].forEach(w => pool.push({w, cat:DECKS[k].label, lvl:l}))));
   if (!pool.length) { showErr('Escreva pelo menos uma palavra ou escolha outra categoria.'); return; }
   const card = makeDeck('impostor', pool)[0]; S.used.impostor.add(card.w);
   const order = shuffle([...Array(n).keys()]); const impSet = new Set(order.slice(0, imps));
   const innocents = [...Array(n).keys()].filter(i => !impSet.has(i));
-  I = {names, ids:named ? S.players.map(p => p.id) : null, w:card.w, cat:card.cat, lvl, imp:impSet, turn:0, phase:'pass', starter:names[pick(innocents)], confirm:false, hint:cfg.hint, confirmT:null, scored:''};
+  I = {names, ids:named ? S.players.map(p => p.id) : null, w:card.w, cat:card.cat, lvl:card.lvl, imp:impSet, turn:0, phase:'pass', starter:names[pick(innocents)], confirm:false, hint:cfg.hint, confirmT:null, scored:''};
   audio(); openStage('impostor'); renderImp();
 }
 function renderImp(){
@@ -1033,7 +1074,8 @@ function startMedida(){
 function medNext(){
   M.i++; if (M.i >= M.deck.length) { M.deck = makeDeck('medida', medPool()); M.i = 0; }
   M.card = M.deck[M.i]; S.used.medida.add(M.card.w);
-  const p = playerById(M.player); M.lvl = p ? p.lvl : S.settings.medida.level;
+  const p = playerById(M.player); const choice = p ? p.lvl : S.settings.medida.level;
+  M.mixed = choice === 'x'; M.lvl = M.mixed ? pick(LV) : choice;
   M.target = 10 + Math.floor(Math.random() * 81); M.guess = 50; M.phase = 'secret'; M.pts = 0;
   renderMed();
 }
@@ -1051,7 +1093,7 @@ function rulerHTML(mode){
 }
 function renderMed(){
   const p = playerById(M.player); let body = '';
-  const who = `${p ? ' · vez de ' + esc(p.name) : ''} · ${LV_NAME[M.lvl]}`;
+  const who = `${p ? ' · vez de ' + esc(p.name) : ''} · ${LV_NAME[M.lvl]}${M.mixed ? ' (sorteado)' : ''}`;
   if (M.phase === 'secret') {
     body = `<p class="ov-kicker">Carta ${M.cards + 1}${who}</p><p class="big-msg">Só quem dá a dica olha a próxima tela</p><p class="ov-sub">O resto da roda vira o rosto por um instante.</p><button class="cta" data-act="med-show">Sou eu, mostrar o alvo</button>`;
   } else if (M.phase === 'clue') {
@@ -1084,11 +1126,12 @@ function stopCats(){ return S.settings.stop.cats.map(k => STOP_CATS[k].label).co
 function startStop(){
   if (!stopCats().length) { showErr('Escolha pelo menos uma categoria.'); return; }
   const cfg = S.settings.stop;
-  audio(); A = {phase:'roll', letter:'?', lvl:cfg.level, limit:cfg.time * 1000, start:0, timer:null, roll:null, lastTick:null, timeUp:false, finalText:''};
+  audio(); A = {phase:'roll', letter:'?', choice:cfg.level, lvl:'f', limit:cfg.time * 1000, start:0, timer:null, roll:null, lastTick:null, timeUp:false, finalText:''};
   openStage('stop'); keepAwake(); stopRound();
 }
 function stopRound(){
   clearInterval(A.timer); clearInterval(A.roll);
+  A.lvl = A.choice === 'x' ? pick(LV) : A.choice;
   const pool = STOP_LETTERS[A.lvl].split(''); let avail = pool.filter(c => !S.usedLetters.has(c));
   if (!avail.length) { pool.forEach(c => S.usedLetters.delete(c)); avail = pool.slice(); }
   const final = pick(avail); S.usedLetters.add(final);
@@ -1121,7 +1164,7 @@ function stopEnd(timeUp){
 }
 function renderStop(){
   const timeText = A.phase === 'over' ? A.finalText : (A.limit ? fmt(A.limit) : '0:00');
-  const top = `<div class="st-top"><div class="st-time" id="stop-time">${timeText}</div><span class="st-label push">Stop · ${LV_NAME[A.lvl]}</span><button class="st-x" data-act="stop-quit" aria-label="Sair do Stop">${ICON_X}</button></div>`;
+  const top = `<div class="st-top"><div class="st-time" id="stop-time">${timeText}</div><span class="st-label push">Stop · ${LV_NAME[A.lvl]}${A.choice === 'x' ? ' (sorteado)' : ''}</span><button class="st-x" data-act="stop-quit" aria-label="Sair do Stop">${ICON_X}</button></div>`;
   if (A.phase !== 'over') {
     stage.innerHTML = top + `<div class="stop-body"><div class="stop-lw"><span class="st-cat">Letra</span><div class="stop-letter" id="stop-letter" aria-live="polite">${A.letter}</div></div>
     <ul class="stop-cats">${stopCats().map(c => `<li>${esc(c)}</li>`).join('')}</ul></div>
@@ -1301,8 +1344,8 @@ function netRender(force){
     <p class="ov-kicker">Código da sala</p><p class="net-code">${code}</p>
     <p class="ov-sub">Cada pessoa abre <b>${esc(location.host)}</b>, escolhe Quem Sou Eu? → Todos juntos e digita este código.</p>
     <p class="ov-kicker">Placar da sala</p>
-    <ul class="net-list">${ranked.map((p, i) => `<li${p.pid === NET.pid ? ' class="me"' : ''}><span class="pos">${r ? `${i + 1}º` : '·'}</span><span class="nm">${esc(p.name)}${p.pid === st.host ? '<span class="net-tag">admin</span>' : ''}${p.pid === NET.pid ? '<span class="net-tag">você</span>' : ''}<small>${LV_NAME[p.lvl]} ×${LV_MULT[p.lvl]}</small></span><span class="pt">${p.pts}</span></li>`).join('')}</ul>
-    <p class="ov-kicker">Seu nível</p><div class="chips">${LV.map(x => chip('me-lvl', x, `${LV_NAME[x]} <small>×${LV_MULT[x]}</small>`, me && me.lvl === x)).join('')}</div>
+    <ul class="net-list">${ranked.map((p, i) => `<li${p.pid === NET.pid ? ' class="me"' : ''}><span class="pos">${r ? `${i + 1}º` : '·'}</span><span class="nm">${esc(p.name)}${p.pid === st.host ? '<span class="net-tag">admin</span>' : ''}${p.pid === NET.pid ? '<span class="net-tag">você</span>' : ''}<small>${LV_NAME[p.lvl]} ${multLabel(p.lvl)}</small></span><span class="pt">${p.pts}</span></li>`).join('')}</ul>
+    <p class="ov-kicker">Seu nível</p><div class="chips">${LV_ALL.map(x => chip('me-lvl', x, `${LV_NAME[x]} <small>${multLabel(x)}</small>`, me && me.lvl === x)).join('')}</div>
     ${isHost
       ? `<button class="cta" data-act="net-start"${st.players.length < 2 || NET.busy ? ' disabled' : ''}>${r ? 'Próxima rodada' : 'Começar a rodada'}</button>${st.players.length < 2 ? '<p class="net-small">Esperando mais alguém entrar com o código.</p>' : ''}`
       : `<p class="ov-sub">Esperando ${esc(nameOf(st.host))} começar a ${r ? 'próxima ' : ''}rodada.</p>`}
@@ -1336,7 +1379,7 @@ async function netStart(){
     if (!fresh.length) { pool.forEach(c => NET.used.delete(c.w)); fresh = pool; }
     if (!fresh.length) return;
     const c = pick(fresh); taken.add(c.w); NET.used.add(c.w);
-    cards[p.pid] = {w:c.w, cat:c.cat, lvl:p.lvl};
+    cards[p.pid] = {w:c.w, cat:c.cat, lvl:c.lvl};
   });
   NET.busy = true; netRender(true);
   try { await netApi({action:'start', code:NET.code, pid:NET.pid, cards}); NET.err = ''; }
@@ -1473,7 +1516,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const el = e.target;
-  if (el.matches && el.matches('select[data-plvl]')) { const p = playerById(el.dataset.plvl); if (p && LV.includes(el.value)) { p.lvl = el.value; save(); } }
+  if (el.matches && el.matches('select[data-plvl]')) { const p = playerById(el.dataset.plvl); if (p && LV_ALL.includes(el.value)) { p.lvl = el.value; save(); } }
 });
 document.addEventListener('submit', e => {
   if (e.target.id !== 'addp') return;

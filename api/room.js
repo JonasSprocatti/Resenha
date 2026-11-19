@@ -22,6 +22,8 @@ const K = (code, part) => `resenha:${code}:${part}`;
 const newId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 const roomCode = (v) => { const c = clean(v, 4).toUpperCase(); if (!/^[A-Z]{4}$/.test(c)) throw fail(404, 'no_room'); return c; };
 const level = (v) => (LV.includes(v) ? v : 'f');
+/* jogadores podem escolher a Mista ('x'); cada carta continua com o nível real dela */
+const playerLevel = (v) => (LV.includes(v) || v === 'x' ? v : 'f');
 const json = (s) => { try { return JSON.parse(s); } catch (e) { return null; } };
 const pairs = (arr) => { const o = {}; for (let i = 0; i < (arr || []).length; i += 2) o[arr[i]] = arr[i + 1]; return o; };
 
@@ -57,7 +59,7 @@ async function state(code) {
   const meta = json(metaRaw);
   if (!meta) throw fail(404, 'no_room');
   const pl = pairs(playersRaw); const pts = pairs(ptsRaw);
-  const players = Object.keys(pl).map((pid) => { const p = json(pl[pid]) || {}; return { pid, name: p.name || 'Jogador', lvl: level(p.lvl), t: p.t || 0, pts: Number(pts[pid]) || 0 }; })
+  const players = Object.keys(pl).map((pid) => { const p = json(pl[pid]) || {}; return { pid, name: p.name || 'Jogador', lvl: playerLevel(p.lvl), t: p.t || 0, pts: Number(pts[pid]) || 0 }; })
     .sort((a, b) => a.t - b.t);
   const round = json(roundRaw);
   let hits = [];
@@ -89,7 +91,7 @@ const ACTIONS = {
       const code = Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
       const [ok] = await redis([['SET', K(code, 'meta'), JSON.stringify({ host: pid, created: Date.now() }), 'NX', 'EX', TTL]]);
       if (ok === 'OK') {
-        await redis([['HSET', K(code, 'players'), pid, JSON.stringify({ name, lvl: level(b.lvl), t: Date.now() })], ['EXPIRE', K(code, 'players'), TTL]]);
+        await redis([['HSET', K(code, 'players'), pid, JSON.stringify({ name, lvl: playerLevel(b.lvl), t: Date.now() })], ['EXPIRE', K(code, 'players'), TTL]]);
         return { code, pid, now: Date.now() };
       }
     }
@@ -105,7 +107,7 @@ const ACTIONS = {
     let t = Date.now();
     if (exists) { const [raw] = await redis([['HGET', K(code, 'players'), pid]]); t = (json(raw) || {}).t || t; }
     else { if (count >= MAX_PLAYERS) throw fail(409, 'full'); pid = newId(); }
-    await redis([['HSET', K(code, 'players'), pid, JSON.stringify({ name, lvl: level(b.lvl), t })]]);
+    await redis([['HSET', K(code, 'players'), pid, JSON.stringify({ name, lvl: playerLevel(b.lvl), t })]]);
     await touch(code);
     return { code, pid, now: Date.now() };
   },
@@ -115,7 +117,7 @@ const ACTIONS = {
     const [raw] = await redis([['HGET', K(code, 'players'), pid]]);
     const p = json(raw); if (!p) throw fail(404, 'no_player');
     if (b.name != null) p.name = clean(b.name, 24) || p.name;
-    if (b.lvl != null) p.lvl = level(b.lvl);
+    if (b.lvl != null) p.lvl = playerLevel(b.lvl);
     await redis([['HSET', K(code, 'players'), pid, JSON.stringify(p)]]);
     return { ok: true, now: Date.now() };
   },
